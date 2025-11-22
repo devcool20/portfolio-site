@@ -42,6 +42,8 @@ const tabs = [
   { id: "projects", label: "projects" },
 ];
 
+import HandDrawnButton from "@/components/HandDrawnButton";
+
 function NavTabs({
   activeTab,
   onChange,
@@ -54,17 +56,12 @@ function NavTabs({
       {tabs.map((tab) => {
         const isActive = tab.id === activeTab;
         return (
-          <button
+          <HandDrawnButton
             key={tab.id}
-            type="button"
+            label={tab.label}
+            isActive={isActive}
             onClick={() => onChange(tab.id)}
-            className={`nav-tab relative px-3 py-1 lowercase transition-colors ${
-              isActive ? "text-[#2f2822]" : "hover:text-[#2f2822]"
-            }`}
-            aria-pressed={isActive}
-          >
-            {tab.label}
-          </button>
+          />
         );
       })}
     </nav>
@@ -161,7 +158,7 @@ function ProjectsSection() {
             href={project.href}
             target="_blank"
             rel="noreferrer"
-            className="project-link inline-flex items-center gap-2 text-lg font-medium text-black no-underline decoration-none md:text-xl"
+            className="project-link inline-flex items-center gap-2 text-lg font-normal text-black no-underline decoration-none md:text-xl"
             style={{ textDecoration: 'none', color: '#000000' }}
           >
             <span>{project.title}</span>
