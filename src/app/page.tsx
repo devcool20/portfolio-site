@@ -29,12 +29,11 @@ const projects = [
     href: "https://salesdoc.vercel.app/",
   },
   {
-    title: "Stocker",
-    subtitle: "Stock market sentiment analysis",
-    description:
-      "A Mobile app that analyzes stock market sentiment using news articles and social media posts. Built using React Native and machine learning model.",
-    href: "https://github.com/devcool20/stocker",
-  },
+  "title": "FinStream",
+  "subtitle": "Real-Time Financial News Stream Aggregator",
+  "description": "A microservices-based backend system that aggregates financial news, performs NLP sentiment analysis, and delivers real-time updates via WebSocket. Built with Python FastAPI, Apache Kafka, PostgreSQL, and Docker.",
+  "href": "https://github.com/devcool20/fin-stream"
+}
 ];
 
 const tabs = [
