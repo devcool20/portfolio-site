@@ -78,3 +78,135 @@ a:hover {
 .project-link:hover {
   color: #000000 !important;
 }
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Subtle fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; opacity: 0; }
+.delay-2 { animation-delay: 0.2s; opacity: 0; }
+.delay-3 { animation-delay: 0.3s; opacity: 0; }
+.delay-4 { animation-delay: 0.4s; opacity: 0; }
+.delay-5 { animation-delay: 0.5s; opacity: 0; }
+
+/* Skill tag styles - matching your aesthetic */
+.skill-tag {
+  display: inline-block;
+  padding: 6px 14px;
+  border: 1.5px solid #d5cdc3;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  color: #8d857a;
+  transition: all 0.25s ease;
+}
+
+.skill-tag:hover {
+  border-color: #b8ae9f;
+  color: #6f655c;
+  transform: translateY(-2px);
+}
+
+/* Experience timeline */
+.timeline-dot {
+  width: 8px;
+  height: 8px;
+  background: #c4b8a9;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.timeline-line {
+  width: 1px;
+  background: linear-gradient(to bottom, #d5cdc3, transparent);
+}
+
+/* Section divider */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #d5cdc3, transparent);
+  margin: 3rem 0;
+}
+
+/* Contact button */
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: 1.5px solid #d5cdc3;
+  border-radius: 9999px;
+  color: #6f655c;
+  text-decoration: none !important;
+  transition: all 0.25s ease;
+}
+
+.contact-btn:hover {
+  border-color: #b8ae9f;
+  background: rgba(213, 205, 195, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Name heading style */
+.name-heading {
+  font-size: 2.5rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: #2f2822;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .name-heading {
+    font-size: 3.5rem;
+  }
+}
+
+/* Subtle underline animation for links */
+.animated-underline {
+  position: relative;
+  text-decoration: none !important;
+}
+
+.animated-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: #cfc5b9;
+  transition: width 0.3s ease;
+}
+
+.animated-underline:hover::after {
+  width: 100%;
+}
+
+/* Image fade effect - soft edges that blend into background */
+.image-fade {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 40px 20px #fbf7f2;
+}
+
+.image-fade img {
+  border-radius: 12px;
+}
