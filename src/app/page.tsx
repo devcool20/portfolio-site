@@ -70,6 +70,7 @@ const tabs = [
 ];
 
 import HandDrawnButton from "@/components/HandDrawnButton";
+import HandDrawnGifBox from "@/components/HandDrawnGifBox";
 
 function NavTabs({
   activeTab,
@@ -98,10 +99,18 @@ function NavTabs({
 function HeaderSection() {
   return (
     <header className="mb-16 animate-fade-in">
-      <h1 className="name-heading mb-4">
-        Divyanshu Sharma
-      </h1>
-      <p className="text-[#8d857a] text-lg md:text-xl">
+      <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] items-end gap-4 md:gap-8">
+        <h1 className="name-heading whitespace-nowrap">
+          Divyanshu Sharma
+        </h1>
+        <div className="translate-y-4 md:translate-y-6">
+          <HandDrawnGifBox
+            src="/f1-monaco.gif"
+            alt="Formula 1 Monaco Grand Prix racing"
+          />
+        </div>
+      </div>
+      <p className="text-[#8d857a] text-lg md:text-xl mt-4">
         Full-Stack Engineer & Builder
       </p>
       <div className="flex items-center gap-2 mt-4 text-sm text-[#a39990]">
