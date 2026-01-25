@@ -67,6 +67,7 @@ const tabs = [
   { id: "projects", label: "projects" },
   { id: "experience", label: "experience" },
   { id: "contact", label: "contact" },
+  { id: "resume", label: "resume" },
 ];
 
 import HandDrawnButton from "@/components/HandDrawnButton";
@@ -111,7 +112,7 @@ function HeaderSection() {
         </div>
       </div>
       <p className="text-[#8d857a] text-lg md:text-xl mt-4">
-        Full-Stack Engineer & Builder
+        Software Developer
       </p>
       <div className="flex items-center gap-2 mt-4 text-sm text-[#a39990]">
         <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
@@ -126,7 +127,7 @@ function AboutSection() {
     <section className="grid gap-12 text-[#8d857a] md:grid-cols-[minmax(0,2.4fr)_minmax(0,1fr)] md:items-start">
       <div className="space-y-6 text-sm leading-7 md:text-base md:leading-[1.85]">
         <p className="animate-fade-in delay-1">
-          22. Application Developer and creator of{" "}
+          22. Application Developer and building{" "}
           <Link
             className="project-link underline decoration-[#cfc5b9] decoration-2 underline-offset-4"
             href="https://projf1.online/"
@@ -135,7 +136,7 @@ function AboutSection() {
           >
             projectF1
           </Link>
-          — building the ultimate experience for formula 1 fans.
+          — the ultimate experience for formula 1 fans.
         </p>
         <p className="animate-fade-in delay-2">
           I worked as a mobile application developer intern
@@ -386,6 +387,52 @@ function ContactSection() {
   );
 }
 
+function ResumeSection() {
+  return (
+    <section className="text-[#8d857a]">
+      <div className="space-y-8">
+        <div className="animate-fade-in">
+          <p className="text-sm uppercase tracking-[0.15em] text-[#a39990] mb-2">
+            My Resume
+          </p>
+          <h2 className="text-2xl text-[#2f2822] font-light">
+            Resume / CV
+          </h2>
+        </div>
+
+        <p className="text-sm leading-7 md:text-base md:leading-[1.85] max-w-2xl animate-fade-in delay-1">
+          View my complete professional resume below.
+        </p>
+
+        <div className="animate-fade-in delay-2 w-full">
+          <div className="relative w-full" style={{ height: 'calc(100vh - 200px)', minHeight: '600px' }}>
+            <iframe
+              src="https://drive.google.com/file/d/1sS2sGZyXnQKOBNo8iuYYr_CzrJBRpgOP/preview"
+              className="w-full h-full border-2 border-[#d5cdc3] rounded-lg"
+              title="Resume"
+              style={{
+                backgroundColor: '#fff',
+              }}
+              allow="autoplay"
+            />
+          </div>
+          <div className="mt-4">
+            <a
+              href="https://drive.google.com/uc?export=download&id=1sS2sGZyXnQKOBNo8iuYYr_CzrJBRpgOP"
+              className="contact-btn"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span>⬇</span>
+              Download Resume
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function renderSection(activeTab: string) {
   switch (activeTab) {
     case "about":
@@ -398,6 +445,8 @@ function renderSection(activeTab: string) {
       return <ExperienceSection />;
     case "contact":
       return <ContactSection />;
+    case "resume":
+      return <ResumeSection />;
     default:
       return <AboutSection />;
   }
@@ -412,7 +461,7 @@ export default function Home() {
         <HeaderSection />
         
         <div className="flex w-full flex-col gap-16 md:flex-row md:items-start md:gap-28">
-          <aside className="sticky top-16 self-start md:w-40 md:flex-none">
+          <aside className="md:sticky md:top-16 self-start md:w-40 md:flex-none">
             <NavTabs activeTab={activeTab} onChange={setActiveTab} />
           </aside>
           <main className="flex-1 overflow-hidden" key={activeTab}>
