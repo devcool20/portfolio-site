@@ -7,7 +7,7 @@ import { useState } from "react";
 const socials = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/divyanshu-sharma-b9b534113/" },
   { label: "X (Twitter)", href: "https://x.com/dshxrmx" },
-  { label: "Instagram", href: "https://instagram.com/d1vyanshu_sharma" },
+  { label: "Instagram", href: "https://instagram.com/d1vyanshu.sharma" },
   { label: "Email", href: "mailto:sharmadivyanshu265@gmail.com" },
   { label: "GitHub", href: "https://github.com/devcool20" },
   { label: "Leetcode", href: "https://leetcode.com/u/devcool20/" },
