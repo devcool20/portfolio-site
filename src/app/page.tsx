@@ -93,6 +93,12 @@ function NavTabs({
           />
         );
       })}
+      <Link
+        href="/blog"
+        className="nav-tab relative px-3 py-1 lowercase text-[#8d857a] hover:text-[#2f2822] transition-colors"
+      >
+        blog
+      </Link>
     </nav>
   );
 }

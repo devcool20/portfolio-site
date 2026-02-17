@@ -210,3 +210,53 @@ html {
 .image-fade img {
   border-radius: 12px;
 }
+
+/* ------------------------------------------------------------------ */
+/*  Blog / Notion content                                              */
+/* ------------------------------------------------------------------ */
+
+.notion-content a {
+  color: #000;
+  text-decoration: underline;
+  text-decoration-color: #cfc5b9;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.notion-content a:hover {
+  text-decoration-color: #b3a595;
+}
+
+.notion-content img {
+  border-radius: 12px;
+}
+
+.notion-content pre {
+  scrollbar-width: thin;
+  scrollbar-color: #5a5049 #2f2822;
+}
+
+.notion-content blockquote {
+  font-style: italic;
+}
+
+.notion-content details summary {
+  list-style: none;
+}
+
+.notion-content details summary::marker,
+.notion-content details summary::-webkit-details-marker {
+  display: none;
+}
+
+.notion-content details summary::before {
+  content: "▸ ";
+  display: inline;
+  color: #a39990;
+  transition: transform 0.2s ease;
+}
+
+.notion-content details[open] summary::before {
+  content: "▾ ";
+}
