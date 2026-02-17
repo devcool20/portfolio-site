@@ -212,11 +212,23 @@ html {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Blog canvas – left-aligned reading layout                          */
+/* ------------------------------------------------------------------ */
+
+.blog-canvas {
+  text-align: left;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Blog / Notion content                                              */
 /* ------------------------------------------------------------------ */
 
+.notion-content {
+  text-align: left;
+}
+
 .notion-content a {
-  color: #000;
+  color: #2f2822;
   text-decoration: underline;
   text-decoration-color: #cfc5b9;
   text-decoration-thickness: 2px;
@@ -234,7 +246,7 @@ html {
 
 .notion-content pre {
   scrollbar-width: thin;
-  scrollbar-color: #5a5049 #2f2822;
+  scrollbar-color: #5a5049 #f0ebe4;
 }
 
 .notion-content blockquote {

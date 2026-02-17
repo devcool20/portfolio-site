@@ -26,7 +26,7 @@ export default function ShareButton({ title, url }: { title: string; url: string
 
   return (
     <button
-      className="text-sm text-[#8d857a] hover:text-[#2f2822] transition-colors"
+      className="text-sm font-light text-[#8d857a] hover:text-[#2f2822] transition-colors"
       onClick={handleShare}
     >
       Share Article

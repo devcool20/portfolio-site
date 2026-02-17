@@ -1,30 +1,42 @@
+import { cache } from "react";
 import { Client } from "@notionhq/client";
 import type {
   PageObjectResponse,
   BlockObjectResponse,
 } from "@notionhq/client/build/src/api-endpoints";
+
 const notion = process.env.NOTION_API_KEY
   ? new Client({ auth: process.env.NOTION_API_KEY })
   : null;
 
 const databaseId = process.env.NOTION_DATABASE_ID || "";
 
-/**
- * Resolve database ID to data source ID (required for Notion API 2025-09-03).
- * If the env has a database ID, we fetch the database and use its first data source.
- */
+/* ------------------------------------------------------------------ */
+/*  Data-source ID resolution (cached per request)                     */
+/* ------------------------------------------------------------------ */
+
+let _cachedDataSourceId: string | null = null;
+
 async function getDataSourceId(): Promise<string | null> {
+  if (_cachedDataSourceId) return _cachedDataSourceId;
   if (!notion || !databaseId) return null;
   try {
     const db = await notion.databases.retrieve({
       database_id: databaseId.trim(),
     });
-    if (db.object === "database" && "data_sources" in db && db.data_sources?.length) {
-      return db.data_sources[0].id;
+    if (
+      db.object === "database" &&
+      "data_sources" in db &&
+      db.data_sources?.length
+    ) {
+      _cachedDataSourceId = db.data_sources[0].id;
+      return _cachedDataSourceId;
     }
-    return databaseId.trim();
+    _cachedDataSourceId = databaseId.trim();
+    return _cachedDataSourceId;
   } catch {
-    return databaseId.trim();
+    _cachedDataSourceId = databaseId.trim();
+    return _cachedDataSourceId;
   }
 }
 
@@ -43,6 +55,7 @@ export interface BlogPost {
   excerpt: string;
   date: string;
   cover: string | null;
+  mediaFiles: string[];
 }
 
 /* ------------------------------------------------------------------ */
@@ -69,8 +82,25 @@ function getCover(page: PageObjectResponse): string | null {
   return null;
 }
 
+function getFiles(
+  prop: PageObjectResponse["properties"][string],
+): string[] {
+  if (prop?.type !== "files") return [];
+  return prop.files
+    .map((f) => {
+      if (f.type === "external") return f.external.url;
+      if (f.type === "file") return f.file.url;
+      return "";
+    })
+    .filter(Boolean);
+}
+
 function pageToPost(page: PageObjectResponse): BlogPost {
   const p = page.properties;
+
+  const filesProperty =
+    p["Files & media"] || p["Files"] || p["Media"] || p["Images"];
+
   return {
     id: page.id,
     title: getPlainText(p.Name, "title"),
@@ -79,11 +109,12 @@ function pageToPost(page: PageObjectResponse): BlogPost {
     date:
       p.Date?.type === "date" && p.Date.date ? p.Date.date.start : "",
     cover: getCover(page),
+    mediaFiles: filesProperty ? getFiles(filesProperty) : [],
   };
 }
 
 /* ------------------------------------------------------------------ */
-/*  Fetch all blocks (recursive)                                       */
+/*  Fetch all blocks (recursive, parallelised children)                */
 /* ------------------------------------------------------------------ */
 
 async function getAllBlocks(blockId: string): Promise<NotionBlock[]> {
@@ -101,8 +132,15 @@ async function getAllBlocks(blockId: string): Promise<NotionBlock[]> {
 
     for (const raw of res.results) {
       if (!("type" in raw)) continue;
-      const block = raw as NotionBlock;
+      blocks.push(raw as NotionBlock);
+    }
 
+    cursor = res.has_more ? (res.next_cursor ?? undefined) : undefined;
+  } while (cursor);
+
+  // Fetch children in parallel instead of sequentially
+  await Promise.all(
+    blocks.map(async (block) => {
       if (
         block.has_children &&
         block.type !== "child_page" &&
@@ -110,77 +148,77 @@ async function getAllBlocks(blockId: string): Promise<NotionBlock[]> {
       ) {
         block._children = await getAllBlocks(block.id);
       }
-
-      blocks.push(block);
-    }
-
-    cursor = res.has_more ? (res.next_cursor ?? undefined) : undefined;
-  } while (cursor);
+    }),
+  );
 
   return blocks;
 }
 
 /* ------------------------------------------------------------------ */
-/*  Public API                                                         */
+/*  Public API — wrapped with React cache() for request dedup          */
 /* ------------------------------------------------------------------ */
 
-export async function getBlogPosts(): Promise<BlogPost[]> {
-  if (!notion || !databaseId) return [];
+export const getBlogPosts = cache(
+  async (): Promise<BlogPost[]> => {
+    if (!notion || !databaseId) return [];
 
-  try {
-    const dataSourceId = await getDataSourceId();
-    if (!dataSourceId) return [];
+    try {
+      const dataSourceId = await getDataSourceId();
+      if (!dataSourceId) return [];
 
-    const res = await notion.dataSources.query({
-      data_source_id: dataSourceId,
-      filter: {
-        property: "Published",
-        checkbox: { equals: true },
-      },
-      sorts: [{ property: "Date", direction: "descending" }],
-    });
+      const res = await notion.dataSources.query({
+        data_source_id: dataSourceId,
+        filter: {
+          property: "Published",
+          checkbox: { equals: true },
+        },
+        sorts: [{ property: "Date", direction: "descending" }],
+      });
 
-    return res.results
-      .filter((p): p is PageObjectResponse => "properties" in p)
-      .map(pageToPost);
-  } catch (err) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[Notion] getBlogPosts failed:", err);
+      return res.results
+        .filter((p): p is PageObjectResponse => "properties" in p)
+        .map(pageToPost);
+    } catch (err) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("[Notion] getBlogPosts failed:", err);
+      }
+      return [];
     }
-    return [];
-  }
-}
+  },
+);
 
-export async function getPostBySlug(
-  slug: string,
-): Promise<{ post: BlogPost; blocks: NotionBlock[] } | null> {
-  if (!notion || !databaseId) return null;
+export const getPostBySlug = cache(
+  async (
+    slug: string,
+  ): Promise<{ post: BlogPost; blocks: NotionBlock[] } | null> => {
+    if (!notion || !databaseId) return null;
 
-  try {
-    const dataSourceId = await getDataSourceId();
-    if (!dataSourceId) return null;
+    try {
+      const dataSourceId = await getDataSourceId();
+      if (!dataSourceId) return null;
 
-    const res = await notion.dataSources.query({
-      data_source_id: dataSourceId,
-      filter: {
-        and: [
-          { property: "Slug", rich_text: { equals: slug } },
-          { property: "Published", checkbox: { equals: true } },
-        ],
-      },
-    });
+      const res = await notion.dataSources.query({
+        data_source_id: dataSourceId,
+        filter: {
+          and: [
+            { property: "Slug", rich_text: { equals: slug } },
+            { property: "Published", checkbox: { equals: true } },
+          ],
+        },
+      });
 
-    const page = res.results[0];
-    if (!page || !("properties" in page)) return null;
+      const page = res.results[0];
+      if (!page || !("properties" in page)) return null;
 
-    const post = pageToPost(page as PageObjectResponse);
-    const blocks = await getAllBlocks(page.id);
+      const post = pageToPost(page as PageObjectResponse);
+      const blocks = await getAllBlocks(page.id);
 
-    return { post, blocks };
-  } catch (err) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[Notion] getPostBySlug failed:", err);
+      return { post, blocks };
+    } catch (err) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("[Notion] getPostBySlug failed:", err);
+      }
+      return null;
     }
-    return null;
-  }
-}
+  },
+);

@@ -1,40 +1,38 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 interface HandDrawnButtonProps {
   label: string;
   isActive: boolean;
-  onClick: () => void;
+  onClick?: () => void;
+  href?: string;
 }
 
 export default function HandDrawnButton({
   label,
   isActive,
   onClick,
+  href,
 }: HandDrawnButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={`relative px-3 py-1 lowercase transition-colors z-10 ${
-        isActive ? "text-[#2f2822]" : "hover:text-[#2f2822]"
-      }`}
-      aria-pressed={isActive}
-    >
+  const sharedClassName = `relative inline-block text-center px-3 py-1 lowercase transition-colors z-10 ${
+    isActive ? "text-[#2f2822]" : "hover:text-[#2f2822]"
+  }`;
+
+  const inner = (
+    <>
       <span className="relative z-10">{label}</span>
-      
+
       {/* SVG Container */}
       <div
         className={`absolute inset-0 -z-10 pointer-events-none flex items-center justify-center transition-opacity duration-300 ${
           isHovered ? "opacity-100" : "opacity-0"
         }`}
         style={{
-            transform: "scale(1.2)", // Make it slightly larger than the text
+          transform: "scale(1.2)",
         }}
       >
         <svg
@@ -54,13 +52,40 @@ export default function HandDrawnButton({
             strokeLinejoin="round"
             className="hand-drawn-path"
             style={{
-                strokeDasharray: 600,
-                strokeDashoffset: isHovered ? 0 : 600,
-                transition: "stroke-dashoffset 2.25s ease-out",
+              strokeDasharray: 600,
+              strokeDashoffset: isHovered ? 0 : 600,
+              transition: "stroke-dashoffset 2.25s ease-out",
             }}
           />
         </svg>
       </div>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={sharedClassName}
+        style={{ textDecoration: "none" }}
+      >
+        {inner}
+      </Link>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={sharedClassName}
+      aria-pressed={isActive}
+    >
+      {inner}
     </button>
   );
 }

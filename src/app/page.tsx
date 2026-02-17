@@ -63,6 +63,7 @@ const experience = [
 
 const tabs = [
   { id: "about", label: "about" },
+  { id: "blog", label: "blog", href: "/blog" },
   { id: "skills", label: "skills" },
   { id: "projects", label: "projects" },
   { id: "experience", label: "experience" },
@@ -89,16 +90,11 @@ function NavTabs({
             key={tab.id}
             label={tab.label}
             isActive={isActive}
-            onClick={() => onChange(tab.id)}
+            onClick={tab.href ? undefined : () => onChange(tab.id)}
+            href={tab.href}
           />
         );
       })}
-      <Link
-        href="/blog"
-        className="nav-tab relative px-3 py-1 lowercase text-[#8d857a] hover:text-[#2f2822] transition-colors"
-      >
-        blog
-      </Link>
     </nav>
   );
 }
