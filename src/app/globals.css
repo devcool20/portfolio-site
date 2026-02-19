@@ -217,6 +217,8 @@ html {
 
 .blog-canvas {
   text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* ------------------------------------------------------------------ */
@@ -225,19 +227,22 @@ html {
 
 .notion-content {
   text-align: left;
+  font-size: 15px;
+  line-height: 1.85;
+  color: #6f655c;
 }
 
 .notion-content a {
-  color: #2f2822;
+  color: #4a3f35;
   text-decoration: underline;
   text-decoration-color: #cfc5b9;
-  text-decoration-thickness: 2px;
+  text-decoration-thickness: 1.5px;
   text-underline-offset: 4px;
   transition: text-decoration-color 0.2s ease;
 }
 
 .notion-content a:hover {
-  text-decoration-color: #b3a595;
+  text-decoration-color: #8d857a;
 }
 
 .notion-content img {

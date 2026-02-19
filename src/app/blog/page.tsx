@@ -11,16 +11,7 @@ export default async function BlogListPage() {
     <div className="animate-fade-in">
       {/* Blog header */}
       <header className="mb-14">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1 text-sm font-light text-[#a39990] hover:text-[#6f655c] transition-colors"
-          style={{ textDecoration: "none" }}
-        >
-          <span aria-hidden>←</span>
-          <span>Back to portfolio</span>
-        </Link>
-
-        <h1 className="name-heading mt-6 text-[#4a3f35]">Blog</h1>
+        <h1 className="name-heading text-[#4a3f35]">Blog</h1>
         <p className="text-[#8d857a] text-lg md:text-xl mt-2 font-light">
           Thoughts, learnings &amp; insights
         </p>

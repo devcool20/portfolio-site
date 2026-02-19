@@ -2,16 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-
-const socials = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/divyanshu-sharma-b9b534113/" },
-  { label: "X (Twitter)", href: "https://x.com/dshxrmx" },
-  { label: "Instagram", href: "https://instagram.com/d1vyanshu.sharma" },
-  { label: "Email", href: "mailto:sharmadivyanshu265@gmail.com" },
-  { label: "GitHub", href: "https://github.com/devcool20" },
-  { label: "Leetcode", href: "https://leetcode.com/u/devcool20/" },
-];
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { socials } from "@/lib/data";
+import NavTabs from "@/components/NavTabs";
+import HeaderSection from "@/components/HeaderSection";
 
 const projects = [
   {
@@ -60,69 +55,6 @@ const experience = [
     description: "Developed mobile applications using React Native and contributed to the company's product development lifecycle.",
   },
 ];
-
-const tabs = [
-  { id: "about", label: "about" },
-  { id: "blog", label: "blog", href: "/blog" },
-  { id: "skills", label: "skills" },
-  { id: "projects", label: "projects" },
-  { id: "experience", label: "experience" },
-  { id: "contact", label: "contact" },
-  { id: "resume", label: "resume" },
-];
-
-import HandDrawnButton from "@/components/HandDrawnButton";
-import HandDrawnGifBox from "@/components/HandDrawnGifBox";
-
-function NavTabs({
-  activeTab,
-  onChange,
-}: {
-  activeTab: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <nav className="flex flex-row gap-4 text-sm text-[#8d857a] md:flex-col md:gap-6 md:text-base flex-wrap">
-      {tabs.map((tab) => {
-        const isActive = tab.id === activeTab;
-        return (
-          <HandDrawnButton
-            key={tab.id}
-            label={tab.label}
-            isActive={isActive}
-            onClick={tab.href ? undefined : () => onChange(tab.id)}
-            href={tab.href}
-          />
-        );
-      })}
-    </nav>
-  );
-}
-
-function HeaderSection() {
-  return (
-    <header className="mb-16 animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] items-end gap-4 md:gap-8">
-        <h1 className="name-heading whitespace-nowrap">
-          Divyanshu Sharma
-        </h1>
-        <div className="translate-y-4 md:translate-y-6">
-          <HandDrawnGifBox
-            src="/f1-monaco.gif"
-            alt="Formula 1 Monaco Grand Prix racing"
-          />
-        </div>
-      </div>
-      <p className="text-[#8d857a] text-lg md:text-xl mt-4">
-        Software Developer
-      </p>
-      <div className="flex items-center gap-2 mt-4 text-sm text-[#a39990]">
-        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-        <span>Available for opportunities</span>
-      </div>
-    </header>
-  );
-}
 
 function AboutSection() {
   return (
@@ -454,8 +386,16 @@ function renderSection(activeTab: string) {
   }
 }
 
-export default function Home() {
+function HomeContent() {
   const [activeTab, setActiveTab] = useState<string>("about");
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen bg-[#fbf7f2] px-6 py-16 text-[#2f2822] md:px-10 lg:px-16">
@@ -464,7 +404,7 @@ export default function Home() {
         
         <div className="flex w-full flex-col gap-16 md:flex-row md:items-start md:gap-28">
           <aside className="md:sticky md:top-16 self-start md:w-40 md:flex-none">
-            <NavTabs activeTab={activeTab} onChange={setActiveTab} />
+            <NavTabs activeTab={activeTab} onChange={setActiveTab} isHome={true} />
           </aside>
           <main className="flex-1 overflow-hidden" key={activeTab}>
             {renderSection(activeTab)}
@@ -472,5 +412,13 @@ export default function Home() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#fbf7f2]" />}>
+      <HomeContent />
+    </Suspense>
   );
 }

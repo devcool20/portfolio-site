@@ -101,11 +101,17 @@ function pageToPost(page: PageObjectResponse): BlogPost {
   const filesProperty =
     p["Files & media"] || p["Files"] || p["Media"] || p["Images"];
 
+  let excerpt = getPlainText(p.Excerpt, "rich_text");
+  excerpt = excerpt
+    .replace(/^[\s*_]*\/?(h1|h2|h3|intro)\s*:\s*/i, "")
+    .replace(/^[\s*_]*#+\s*/, "")
+    .trim();
+
   return {
     id: page.id,
     title: getPlainText(p.Name, "title"),
     slug: getPlainText(p.Slug, "rich_text"),
-    excerpt: getPlainText(p.Excerpt, "rich_text"),
+    excerpt,
     date:
       p.Date?.type === "date" && p.Date.date ? p.Date.date.start : "",
     cover: getCover(page),
