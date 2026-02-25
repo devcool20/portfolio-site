@@ -341,7 +341,7 @@ function ResumeSection() {
         <div className="animate-fade-in delay-2 w-full">
           <div className="relative w-full" style={{ height: 'calc(100vh - 200px)', minHeight: '600px' }}>
             <iframe
-              src="https://drive.google.com/file/d/1sS2sGZyXnQKOBNo8iuYYr_CzrJBRpgOP/preview"
+              src="https://drive.google.com/file/d/1dmk-p2k3evLVCiWz5IgyANhIdhH6OjnC/preview"
               className="w-full h-full border-2 border-[#d5cdc3] rounded-lg"
               title="Resume"
               style={{
