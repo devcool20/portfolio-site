@@ -2,19 +2,42 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { socials } from "@/lib/data";
 import NavTabs from "@/components/NavTabs";
 import HeaderSection from "@/components/HeaderSection";
+import SmartTracingBeam from "@/components/ui/smart-tracing-beam";
 
 const projects = [
   {
-    title: "projectF1",
-    subtitle: "F1 community app",
+    title: "projF1",
+    subtitle: "F1 Experience App",
     description:
-      "A formula 1 community app that allows users to create and share their views on the ongoing season and get all the latest stuff about the season. Also provides a platform to know about screening events, merchandise, and world championship standings. Built using react native and expo.",
+      `(a) What it is: A real-time, one-stop dashboard for F1 fans featuring live race data, driver grids, track conditions, fan discussions (threads), community predictions (podium, pole, driver of the day), and local event screenings. Built as a Next.js + TypeScript web app.
+      
+       (b) What problem it solves: F1 race weekends scatter critical info across 5+ platforms (official F1 app, X, Reddit, timing apps, local event pages). Fans waste time hunting updates instead of enjoying the race. projf1 consolidates everything into a single “command center” with zero-friction access.
+      
+       (c) My exact contribution: I built the entire product solo (frontend, real-time data integration, UI/UX, deployment). It was my thesis project on community-driven sports engagement and is already live and gaining organic traction among Indian F1 communities.`,
     href: "https://projf1.online/",
+  },
+  {
+    title: "Loql",
+    subtitle: "Peer-to-Peer Neighborhood Rental Marketplace",
+    description:
+      `(a) What it is: An urban “bazaar” app where neighbors rent everyday items from each other. Features hyper-local discovery (“Aas-Paas”), story-rich listings (“Katha”), simple booking chat (“Samvaad”), and a warm onboarding (“The Dwar”). Full Next.js web app (with companion Android APK).
+(b) What problem it solves: People buy expensive items they use only a few times a year while identical items sit unused in their neighbors’ homes. Loql turns hidden neighborhood inventory into a trust-based, money-saving sharing economy.
+(c) My exact contribution: I conceived the entire product (including the storytelling angle that differentiates it from generic rental apps), designed the UX, coded the full web platform, and shipped the Android build. It was my consumer thesis project on community commerce and is positioned for strong network-effect revenue (transaction fees + premium neighborhood features).`,
+    href: "https://loql.in/",
+  },
+  {
+    title: "ProofEstate",
+    subtitle: "Real-World Asset (RWA) Tokenization Protocol on Solana",
+    description:
+      `(a) What it is: A complete end-to-end real-estate tokenization platform on Solana. Owners submit title deeds → government verifiers validate → properties are fractionalized into SPL Token-2022 tokens → rental yields are automatically distributed in USDC/USDT to token holders. Full-stack: Solana (Anchor) smart contracts + Rust/Axum backend + Next.js dashboard.
+(b) What problem it solves: Real estate is the largest asset class in the world but is extremely illiquid, inaccessible (minimum investment = entire property), and plagued by title fraud and manual rent distribution. ProofEstate makes any verified property ownable for as little as $50 with full transparency and automated passive income.
+(c) My exact contribution: I architected and coded the entire protocol solo (on-chain logic, verifier flow, backend automation, frontend dashboard, and security model using PDAs). It is my blockchain thesis project and is built for institutional-grade revenue (platform fees + yield automation).`,
+    href: "https://proof-estate.vercel.app/",
   },
   {
     title: "Sales Doc",
@@ -172,6 +195,41 @@ function SkillsSection() {
 }
 
 function ProjectsSection() {
+  const renderProjectDescription = (description: string) => {
+    const trimmed = description.trim();
+    const hasStructured =
+      /\(a\)/i.test(trimmed) && /\(b\)/i.test(trimmed) && /\(c\)/i.test(trimmed);
+
+    if (!hasStructured) {
+      return (
+        <p className="max-w-2xl text-sm leading-7 text-[#9c9187] md:text-base md:leading-7">
+          {description}
+        </p>
+      );
+    }
+
+    const cleaned = trimmed.replace(/\r\n/g, "\n");
+    const parts = cleaned
+      .split(/\(\s*[abc]\s*\)\s*/i)
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const labels = ["a", "b", "c"] as const;
+
+    return (
+      <div className="max-w-2xl space-y-3 text-sm leading-7 text-[#9c9187] md:text-base md:leading-7">
+        {parts.slice(0, 3).map((part, i) => (
+          <div key={labels[i]} className="grid gap-1">
+            <p className="text-xs uppercase tracking-[0.14em] text-[#a39990]">
+              {labels[i]}
+            </p>
+            <p className="whitespace-pre-wrap">{part}</p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <section className="space-y-16 text-[#8d857a]">
       <div className="animate-fade-in">
@@ -200,9 +258,7 @@ function ProjectsSection() {
           <p className="text-sm font-small uppercase tracking-[0.1em] text-[#a39990]">
             {project.subtitle}
           </p>
-          <p className="max-w-2xl text-sm leading-7 text-[#9c9187] md:text-base md:leading-7">
-            {project.description}
-          </p>
+          {renderProjectDescription(project.description)}
         </div>
       ))}
     </section>
@@ -341,7 +397,7 @@ function ResumeSection() {
         <div className="animate-fade-in delay-2 w-full">
           <div className="relative w-full" style={{ height: 'calc(100vh - 200px)', minHeight: '600px' }}>
             <iframe
-              src="https://drive.google.com/file/d/1dmk-p2k3evLVCiWz5IgyANhIdhH6OjnC/preview"
+              src="https://drive.google.com/file/d/1kPsHonu9yurrcqwUA45GgAfil9HmjwGrwr28QFGMLIo/preview"
               className="w-full h-full border-2 border-[#d5cdc3] rounded-lg"
               title="Resume"
               style={{
@@ -387,18 +443,12 @@ function renderSection(activeTab: string) {
 }
 
 function HomeContent() {
-  const [activeTab, setActiveTab] = useState<string>("about");
   const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab) {
-      setActiveTab(tab);
-    }
-  }, [searchParams]);
+  const initialTab = searchParams.get("tab") ?? "about";
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
 
   return (
-    <div className="min-h-screen bg-[#fbf7f2] px-6 py-16 text-[#2f2822] md:px-10 lg:px-16">
+    <div className="min-h-screen px-6 py-16 text-[#2f2822] md:px-10 lg:px-16">
       <div className="max-w-5xl mx-auto">
         <HeaderSection />
         
@@ -406,8 +456,10 @@ function HomeContent() {
           <aside className="md:sticky md:top-16 self-start md:w-40 md:flex-none">
             <NavTabs activeTab={activeTab} onChange={setActiveTab} isHome={true} />
           </aside>
-          <main className="flex-1 overflow-hidden" key={activeTab}>
-            {renderSection(activeTab)}
+          <main className="flex-1 overflow-visible" key={activeTab}>
+            <SmartTracingBeam className="pl-10 md:pl-12">
+              {renderSection(activeTab)}
+            </SmartTracingBeam>
           </main>
         </div>
       </div>
@@ -417,7 +469,7 @@ function HomeContent() {
 
 export default function Home() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#fbf7f2]" />}>
+    <Suspense fallback={<div className="min-h-screen" />}>
       <HomeContent />
     </Suspense>
   );

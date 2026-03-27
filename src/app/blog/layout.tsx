@@ -3,6 +3,7 @@
 import React, { Suspense } from "react";
 import HeaderSection from "@/components/HeaderSection";
 import NavTabs from "@/components/NavTabs";
+import SmartTracingBeam from "@/components/ui/smart-tracing-beam";
 
 export default function BlogLayout({
   children,
@@ -10,7 +11,7 @@ export default function BlogLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#fbf7f2] px-6 py-16 text-[#2f2822] md:px-10 lg:px-16">
+    <div className="min-h-screen px-6 py-16 text-[#2f2822] md:px-10 lg:px-16">
       <div className="max-w-5xl mx-auto">
         <HeaderSection />
 
@@ -20,8 +21,8 @@ export default function BlogLayout({
               <NavTabs activeTab="blog" isHome={false} />
             </Suspense>
           </aside>
-          <main className="flex-1 overflow-hidden" style={{ minWidth: 0 }}>
-            {children}
+          <main className="flex-1 overflow-visible" style={{ minWidth: 0 }}>
+            <SmartTracingBeam className="pl-10 md:pl-12">{children}</SmartTracingBeam>
           </main>
         </div>
       </div>

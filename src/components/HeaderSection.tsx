@@ -1,15 +1,54 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import HandDrawnGifBox from "./HandDrawnGifBox";
 
 export default function HeaderSection() {
+  const toggleRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const savedTheme = window.localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const shouldUseDark = savedTheme ? savedTheme === "dark" : prefersDark;
+
+    document.documentElement.setAttribute(
+      "data-theme",
+      shouldUseDark ? "dark" : "light",
+    );
+    if (toggleRef.current) {
+      toggleRef.current.checked = shouldUseDark;
+    }
+  }, []);
+
+  const handleThemeToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const nextDarkMode = event.target.checked;
+    document.documentElement.setAttribute(
+      "data-theme",
+      nextDarkMode ? "dark" : "light",
+    );
+    window.localStorage.setItem("theme", nextDarkMode ? "dark" : "light");
+  };
+
   return (
     <header className="mb-16 animate-fade-in">
       <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] items-end gap-4 md:gap-8">
-        <h1 className="name-heading whitespace-nowrap">
-          Divyanshu Sharma
-        </h1>
+        <div className="flex flex-col items-start">
+          <h1 className="name-heading whitespace-nowrap">Divyanshu Sharma</h1>
+          <label className="theme-toggle mt-3">
+            <input
+              ref={toggleRef}
+              type="checkbox"
+              onChange={handleThemeToggle}
+              className="theme-toggle-input"
+              role="switch"
+              aria-label="Toggle dark mode"
+            />
+            <span className="theme-toggle-track">
+              <span className="theme-toggle-thumb" />
+            </span>
+            <span className="theme-toggle-label">Dark mode</span>
+          </label>
+        </div>
         <div className="translate-y-4 md:translate-y-6">
           <HandDrawnGifBox
             src="/f1-monaco.gif"
