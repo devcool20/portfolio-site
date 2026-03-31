@@ -58,7 +58,7 @@ export function TracingBeam({ children, className }: TracingBeamProps) {
                 ? "none"
                 : "rgba(0, 0, 0, 0.24) 0px 3px 8px",
           }}
-          className="ml-[27px] flex h-4 w-4 items-center justify-center rounded-full border border-[#d9d0c6] bg-white/80 shadow-sm"
+          className="ml-[15px] flex h-4 w-4 items-center justify-center rounded-full border border-[#d9d0c6] bg-white/80 shadow-sm"
         >
           <motion.div
             transition={{ duration: 0.2, delay: 0.5 }}
@@ -74,7 +74,7 @@ export function TracingBeam({ children, className }: TracingBeamProps) {
           viewBox={`0 0 20 ${svgHeight}`}
           width="20"
           height={svgHeight}
-          className="ml-4 block"
+          className="ml-1 block"
           aria-hidden="true"
         >
           <motion.path

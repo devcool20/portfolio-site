@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, Suspense, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { socials } from "@/lib/data";
 import NavTabs from "@/components/NavTabs";
 import HeaderSection from "@/components/HeaderSection";
@@ -71,11 +71,20 @@ const skills = [
 
 const experience = [
   {
-    role: "Mobile Application Developer Intern",
-    company: "ZingVel",
+    role: "Co-Founder",
+    company: "Loql",
+    companyUrl: "https://loql.in/",
+    period: "August 2025 – Present",
+    description: `• Designed & developed full end-to-end peer-to-peer rental marketplace with React Native mobile app and Web App, with secure 2-way QR handshake for instant transaction verification.
+• Conducted user research in one major gated society to understand daily-use item management and short-term rental needs, identifying key bottlenecks to build localized trust networks that eliminate logistics overhead.`,
+  },
+  {
+    role: "Software Developer Intern",
+    company: "Zingvel Travels - Noida",
     companyUrl: "http://www.zingvel.com/",
-    period: "2024",
-    description: "Developed mobile applications using React Native and contributed to the company's product development lifecycle.",
+    period: "December 2024 – May 2025",
+    description: `• Engineered major UI/UX components, including a comprehensive ticketing system for airlines.
+• Developed and integrated ’Wanderlust,’ an AI-powered travel recommendation engine, to enhance user engagement and personalize booking experiences.`,
   },
 ];
 
@@ -96,7 +105,7 @@ function AboutSection() {
           — the ultimate experience for formula 1 fans.
         </p>
         <p className="animate-fade-in delay-2">
-          I worked as a mobile application developer intern
+          I worked as a software developer intern
           {" "}at{" "}
           <Link
             className="project-link underline decoration-[#cfc5b9] decoration-2 underline-offset-4"
@@ -104,7 +113,7 @@ function AboutSection() {
             target="_blank"
             rel="noreferrer"
           >
-            ZingVel
+            Zingvel Travels
           </Link>
           .
         </p>
@@ -301,7 +310,7 @@ function ExperienceSection() {
                 >
                   {exp.company} ↗
                 </Link>
-                <p className="text-sm leading-7 text-[#9c9187] md:text-base md:leading-7 mt-2">
+                <p className="text-sm leading-7 text-[#9c9187] md:text-base md:leading-7 mt-2 whitespace-pre-wrap">
                   {exp.description}
                 </p>
               </div>
@@ -377,51 +386,7 @@ function ContactSection() {
   );
 }
 
-function ResumeSection() {
-  return (
-    <section className="text-[#8d857a]">
-      <div className="space-y-8">
-        <div className="animate-fade-in">
-          <p className="text-sm uppercase tracking-[0.15em] text-[#a39990] mb-2">
-            My Resume
-          </p>
-          <h2 className="text-2xl text-[#2f2822] font-light">
-            Resume / CV
-          </h2>
-        </div>
 
-        <p className="text-sm leading-7 md:text-base md:leading-[1.85] max-w-2xl animate-fade-in delay-1">
-          View my complete professional resume below.
-        </p>
-
-        <div className="animate-fade-in delay-2 w-full">
-          <div className="relative w-full" style={{ height: 'calc(100vh - 200px)', minHeight: '600px' }}>
-            <iframe
-              src="https://drive.google.com/file/d/1kPsHonu9yurrcqwUA45GgAfil9HmjwGrwr28QFGMLIo/preview"
-              className="w-full h-full border-2 border-[#d5cdc3] rounded-lg"
-              title="Resume"
-              style={{
-                backgroundColor: '#fff',
-              }}
-              allow="autoplay"
-            />
-          </div>
-          <div className="mt-4">
-            <a
-              href="https://drive.google.com/uc?export=download&id=1sS2sGZyXnQKOBNo8iuYYr_CzrJBRpgOP"
-              className="contact-btn"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span>⬇</span>
-              Download Resume
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function renderSection(activeTab: string) {
   switch (activeTab) {
@@ -435,17 +400,26 @@ function renderSection(activeTab: string) {
       return <ExperienceSection />;
     case "contact":
       return <ContactSection />;
-    case "resume":
-      return <ResumeSection />;
     default:
       return <AboutSection />;
   }
 }
 
 function HomeContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") ?? "about";
   const [activeTab, setActiveTab] = useState<string>(initialTab);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab") ?? "about";
+    setActiveTab(tab);
+  }, [searchParams]);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    router.push(`/?tab=${tab}`, { scroll: false });
+  };
 
   return (
     <div className="min-h-screen px-6 py-16 text-[#2f2822] md:px-10 lg:px-16">
@@ -454,10 +428,10 @@ function HomeContent() {
         
         <div className="flex w-full flex-col gap-16 md:flex-row md:items-start md:gap-28">
           <aside className="md:sticky md:top-16 self-start md:w-40 md:flex-none">
-            <NavTabs activeTab={activeTab} onChange={setActiveTab} isHome={true} />
+            <NavTabs activeTab={activeTab} onChange={handleTabChange} isHome={true} />
           </aside>
           <main className="flex-1 overflow-visible" key={activeTab}>
-            <SmartTracingBeam className="pl-10 md:pl-12">
+            <SmartTracingBeam className="pl-12 md:pl-16">
               {renderSection(activeTab)}
             </SmartTracingBeam>
           </main>

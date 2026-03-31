@@ -23,9 +23,7 @@ export default function GlobalBackgroundEffects() {
     const prefersReducedMotion = browserWindow.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const isDesktop = browserWindow.innerWidth >= 1024;
-
-    if (prefersReducedMotion || !isDesktop) {
+    if (prefersReducedMotion) {
       return;
     }
 

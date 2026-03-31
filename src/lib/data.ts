@@ -5,7 +5,6 @@ export const tabs = [
   { id: "projects", label: "projects" },
   { id: "experience", label: "experience" },
   { id: "contact", label: "contact" },
-  { id: "resume", label: "resume" },
 ];
 
 export const socials = [
