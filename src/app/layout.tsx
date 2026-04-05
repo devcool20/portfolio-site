@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Manrope, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import GlobalBackgroundEffects from "@/components/ui/global-background-effects";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 const geistMono = Geist_Mono({
@@ -27,10 +33,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} relative min-h-screen overflow-x-hidden bg-[#fbf7f2] antialiased`}
+        className={`${spaceGrotesk.variable} ${manrope.variable} ${geistMono.variable} relative min-h-screen overflow-x-hidden bg-[#060608] antialiased`}
       >
-        <GlobalBackgroundEffects />
-        <div className="relative z-10">{children}</div>
+        {children}
       </body>
     </html>
   );

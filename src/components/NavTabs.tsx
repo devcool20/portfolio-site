@@ -14,7 +14,7 @@ export default function NavTabs({
   isHome?: boolean;
 }) {
   return (
-    <nav className="flex flex-row gap-4 text-sm text-[#8d857a] md:flex-col md:gap-6 md:text-base flex-wrap">
+    <nav className="flex flex-row gap-3 text-sm text-gray-500 md:flex-col md:gap-5 md:text-[13px] flex-wrap font-mono uppercase tracking-[0.12em]">
       {tabs.map((tab) => {
         const isActive = tab.id === activeTab;
         

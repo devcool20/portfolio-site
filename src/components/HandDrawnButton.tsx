@@ -18,8 +18,8 @@ export default function HandDrawnButton({
 }: HandDrawnButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  const sharedClassName = `relative inline-block text-center px-3 py-1 lowercase transition-colors z-10 ${
-    isActive ? "text-[#2f2822]" : "hover:text-[#2f2822]"
+  const sharedClassName = `relative inline-block text-center px-2 py-1 lowercase transition-colors z-10 ${
+    isActive ? "text-[#FF1800]" : "text-gray-500 hover:text-gray-300"
   }`;
 
   const inner = (
@@ -46,7 +46,7 @@ export default function HandDrawnButton({
           <path
             d="M10,20 C10,10 25,5 50,5 C75,5 90,10 90,20 C90,30 75,35 50,35 C25,35 10,30 10,20 C10,12 25,8 50,8 C75,8 92,12 92,22 C92,32 75,38 50,38 C25,38 8,32 8,22"
             fill="none"
-            stroke="#2f2822"
+            stroke="rgba(255,24,0,0.35)"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"

@@ -1,0 +1,20 @@
+{
+  "name": "portfolio-stitch-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local MCP server for Google Stitch (stdio → stitch.googleapis.com/mcp)",
+  "main": "index.js",
+  "bin": {
+    "stitch-local-mcp": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "node-fetch": "^2.7.0"
+  }
+}

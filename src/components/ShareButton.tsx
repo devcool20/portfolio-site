@@ -26,10 +26,11 @@ export default function ShareButton({ title, url }: { title: string; url: string
 
   return (
     <button
-      className="text-sm font-light text-[#8d857a] hover:text-[#2f2822] transition-colors"
+      type="button"
+      className="text-xs font-mono uppercase tracking-[0.15em] text-gray-500 hover:text-[#FF1800] transition-colors"
       onClick={handleShare}
     >
-      Share Article
+      Share
     </button>
   );
 }

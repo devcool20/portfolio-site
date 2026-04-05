@@ -1,7 +1,6 @@
 "use client";
 
 import React, { Suspense } from "react";
-import HeaderSection from "@/components/HeaderSection";
 import NavTabs from "@/components/NavTabs";
 import SmartTracingBeam from "@/components/ui/smart-tracing-beam";
 
@@ -11,20 +10,19 @@ export default function BlogLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen px-6 py-16 text-[#2f2822] md:px-10 lg:px-16">
-      <div className="max-w-5xl mx-auto">
-        <HeaderSection />
-
-        <div className="flex w-full flex-col gap-16 md:flex-row md:items-start md:gap-28">
-          <aside className="md:sticky md:top-16 self-start md:w-40 md:flex-none">
-            <Suspense fallback={<div />}>
+    <div className="min-h-screen bg-[#060608] text-gray-300">
+      <div className="mx-auto flex min-h-screen max-w-[1400px] flex-col px-4 py-8 sm:px-6 md:flex-row md:gap-0 md:px-8 md:py-10 lg:px-12">
+        <aside className="mb-10 shrink-0 border-b border-[#1e1e28] pb-8 md:mb-0 md:w-48 md:border-b-0 md:border-r md:border-[#1e1e28]/90 md:pb-0 md:pr-8 lg:w-52 lg:pr-10">
+          <div className="md:sticky md:top-10">
+            <Suspense fallback={<div className="h-24 w-32 animate-pulse rounded bg-[#131318]" />}>
               <NavTabs activeTab="blog" isHome={false} />
             </Suspense>
-          </aside>
-          <main className="flex-1 overflow-visible" style={{ minWidth: 0 }}>
-            <SmartTracingBeam className="pl-10 md:pl-12">{children}</SmartTracingBeam>
-          </main>
-        </div>
+          </div>
+        </aside>
+
+        <main className="min-w-0 flex-1 md:border-l md:border-[#1e1e28]/80 md:pl-8 lg:pl-12">
+          <SmartTracingBeam className="pl-0">{children}</SmartTracingBeam>
+        </main>
       </div>
     </div>
   );

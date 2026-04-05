@@ -1,0 +1,5 @@
+This directory contains a derivative work based on stitch-mcp
+(https://github.com/Kargatharaakash/stitch-mcp, Apache License 2.0).
+
+Modifications: API key authentication via X-Goog-Api-Key (STITCH_API_KEY / GOOGLE_API_KEY),
+optional STITCH_PROJECT_ID alias, and logging prefix changes.

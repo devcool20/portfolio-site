@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import HandDrawnGifBox from "./HandDrawnGifBox";
+import BlogBlueprintBanner from "./blog/BlogBlueprintBanner";
 
 export default function HeaderSection() {
   const toggleRef = useRef<HTMLInputElement>(null);
@@ -30,10 +30,12 @@ export default function HeaderSection() {
   };
 
   return (
-    <header className="mb-16 animate-fade-in">
+    <header className="mb-12 md:mb-16 animate-fade-in">
       <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] items-end gap-4 md:gap-8">
         <div className="flex flex-col items-start">
-          <h1 className="name-heading whitespace-nowrap">Divyanshu Sharma</h1>
+          <h1 className="text-xl sm:text-2xl font-light tracking-tight text-white whitespace-nowrap">
+            Divyanshu Sharma
+          </h1>
           <label className="theme-toggle mt-3">
             <input
               ref={toggleRef}
@@ -46,21 +48,18 @@ export default function HeaderSection() {
             <span className="theme-toggle-track">
               <span className="theme-toggle-thumb" />
             </span>
-            <span className="theme-toggle-label">Dark mode</span>
+            <span className="theme-toggle-label text-gray-500">Dark mode</span>
           </label>
         </div>
-        <div className="translate-y-4 md:translate-y-6">
-          <HandDrawnGifBox
-            src="/f1-monaco.gif"
-            alt="Formula 1 Monaco Grand Prix racing"
-          />
+        <div className="translate-y-4 md:translate-y-6 w-full min-w-0">
+          <BlogBlueprintBanner />
         </div>
       </div>
-      <p className="text-[#8d857a] text-lg md:text-xl mt-4">
+      <p className="text-gray-400 text-base md:text-lg mt-4 font-light">
         Software Developer
       </p>
-      <div className="flex items-center gap-2 mt-4 text-sm text-[#a39990]">
-        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+      <div className="flex items-center gap-2 mt-4 text-xs font-mono uppercase tracking-[0.12em] text-gray-500">
+        <span className="w-2 h-2 bg-[#FF1800] rounded-full animate-pulse shadow-[0_0_8px_rgba(255,24,0,0.6)]" />
         <span>Available for opportunities</span>
       </div>
     </header>

@@ -1,7 +1,15 @@
+"use client";
+
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+import React, { createContext, useContext } from "react";
 import type { NotionBlock } from "@/lib/notion";
 import type { RichTextItemResponse } from "@notionhq/client/build/src/api-endpoints";
+import {
+  notionBlockClasses,
+  type NotionSurface,
+} from "@/components/notion-theme";
+
+const NotionSurfaceContext = createContext<NotionSurface>("paper");
 
 /* ------------------------------------------------------------------ */
 /*  Notion color → CSS                                                 */
@@ -81,6 +89,9 @@ function textWithLineBreaks(text: string): React.ReactNode {
 /* ------------------------------------------------------------------ */
 
 function RichText({ items }: { items: RichTextItemResponse[] }) {
+  const surface = useContext(NotionSurfaceContext);
+  const f1 = surface === "f1";
+
   return (
     <>
       {items.map((t, i) => {
@@ -95,7 +106,13 @@ function RichText({ items }: { items: RichTextItemResponse[] }) {
 
         if (code) {
           node = (
-            <code className="px-1.5 py-0.5 bg-[#f0ebe4] rounded text-[0.85em] text-[#6f655c] font-mono font-normal">
+            <code
+              className={
+                f1
+                  ? "px-1.5 py-0.5 rounded text-[0.85em] text-gray-300 font-mono font-normal border border-[#1e1e28] bg-[#1a1a22]"
+                  : "px-1.5 py-0.5 bg-[#f0ebe4] rounded text-[0.85em] text-[#6f655c] font-mono font-normal"
+              }
+            >
               {node}
             </code>
           );
@@ -105,7 +122,11 @@ function RichText({ items }: { items: RichTextItemResponse[] }) {
             <strong
               className="font-medium"
               style={{
-                color: hasCustomStyle ? colorStyle.color : "#4a3f35",
+                color: hasCustomStyle
+                  ? colorStyle.color
+                  : f1
+                    ? "#f0f0f5"
+                    : "#4a3f35",
               }}
             >
               {node}
@@ -115,7 +136,15 @@ function RichText({ items }: { items: RichTextItemResponse[] }) {
         if (strikethrough) node = <s>{node}</s>;
         if (underline)
           node = (
-            <u className="decoration-[#d5cdc3] underline-offset-4">{node}</u>
+            <u
+              className={
+                f1
+                  ? "decoration-gray-600 underline-offset-4"
+                  : "decoration-[#d5cdc3] underline-offset-4"
+              }
+            >
+              {node}
+            </u>
           );
 
         if (hasCustomStyle) {
@@ -128,9 +157,13 @@ function RichText({ items }: { items: RichTextItemResponse[] }) {
               href={t.href}
               target="_blank"
               rel="noreferrer"
-              className="underline decoration-[#cfc5b9] decoration-2 underline-offset-4 hover:decoration-[#a39990] transition-colors"
+              className={
+                f1
+                  ? "underline decoration-[#FF1800]/45 decoration-2 underline-offset-4 hover:decoration-[#FF6B35] transition-colors"
+                  : "underline decoration-[#cfc5b9] decoration-2 underline-offset-4 hover:decoration-[#a39990] transition-colors"
+              }
               style={{
-                color: hasCustomStyle ? colorStyle.color : "#4a3f35",
+                color: hasCustomStyle ? colorStyle.color : f1 ? "#FF1800" : "#4a3f35",
               }}
             >
               {node}
@@ -149,6 +182,8 @@ function RichText({ items }: { items: RichTextItemResponse[] }) {
 /* ------------------------------------------------------------------ */
 
 function Block({ block }: { block: NotionBlock }) {
+  const surface = useContext(NotionSurfaceContext);
+  const nc = notionBlockClasses(surface);
   const children = block._children;
 
   switch (block.type) {
@@ -160,18 +195,14 @@ function Block({ block }: { block: NotionBlock }) {
       if (slashHeading) {
         const { level, text } = slashHeading;
         const headingClass =
-          level === 1
-            ? "text-[1.65rem] md:text-[1.9rem] font-light mt-14 mb-6 leading-tight text-[#3a3229]"
-            : level === 2
-              ? "text-[1.35rem] md:text-[1.55rem] font-light mt-12 mb-5 leading-snug text-[#3a3229]"
-              : "text-[1.1rem] md:text-[1.25rem] font-light mt-10 mb-4 text-[#3a3229]";
+          level === 1 ? nc.slashH1 : level === 2 ? nc.slashH2 : nc.slashH3;
         const Tag = level === 1 ? "h2" : level === 2 ? "h3" : "h4";
         return (
           <Tag className={headingClass}>{text}</Tag>
         );
       }
       return (
-        <p className="text-[15px] leading-[1.85] font-light text-[#6f655c] mb-6">
+        <p className={nc.paragraph}>
           <RichText items={rt} />
         </p>
       );
@@ -180,21 +211,21 @@ function Block({ block }: { block: NotionBlock }) {
     /* ---------- Headings ---------- */
     case "heading_1":
       return (
-        <h2 className="text-[1.65rem] md:text-[1.9rem] font-light mt-14 mb-6 leading-tight text-[#3a3229]">
+        <h2 className={nc.h1}>
           <RichText items={block.heading_1.rich_text} />
         </h2>
       );
 
     case "heading_2":
       return (
-        <h3 className="text-[1.35rem] md:text-[1.55rem] font-light mt-12 mb-5 leading-snug text-[#3a3229]">
+        <h3 className={nc.h2}>
           <RichText items={block.heading_2.rich_text} />
         </h3>
       );
 
     case "heading_3":
       return (
-        <h4 className="text-[1.1rem] md:text-[1.25rem] font-light mt-10 mb-4 text-[#3a3229]">
+        <h4 className={nc.h3}>
           <RichText items={block.heading_3.rich_text} />
         </h4>
       );
@@ -202,7 +233,7 @@ function Block({ block }: { block: NotionBlock }) {
     /* ---------- Lists ---------- */
     case "bulleted_list_item":
       return (
-        <li className="text-[15px] leading-[1.85] font-light text-[#6f655c] ml-5 list-disc marker:text-[#c4b8a9] mb-2 pl-1.5">
+        <li className={`${nc.li} ${nc.liBullet}`}>
           <RichText items={block.bulleted_list_item.rich_text} />
           {children && children.length > 0 && (
             <ul className="mt-2 space-y-1.5">
@@ -216,7 +247,7 @@ function Block({ block }: { block: NotionBlock }) {
 
     case "numbered_list_item":
       return (
-        <li className="text-[15px] leading-[1.85] font-light text-[#6f655c] ml-5 list-decimal marker:text-[#c4b8a9] mb-2 pl-1.5">
+        <li className={`${nc.li} ${nc.liNum}`}>
           <RichText items={block.numbered_list_item.rich_text} />
           {children && children.length > 0 && (
             <ol className="mt-2 space-y-1.5">
@@ -231,13 +262,9 @@ function Block({ block }: { block: NotionBlock }) {
     case "to_do": {
       const checked = block.to_do.checked;
       return (
-        <div className="flex items-start gap-3 mb-2.5 text-[15px] leading-[1.85] font-light text-[#6f655c]">
+        <div className={nc.todo}>
           <div
-            className={`mt-1.5 flex-none w-4 h-4 rounded border ${
-              checked
-                ? "bg-[#6f655c] border-[#6f655c]"
-                : "border-[#d5cdc3]"
-            } flex items-center justify-center`}
+            className={`mt-1.5 flex-none w-4 h-4 rounded border ${nc.todoBox(checked)} flex items-center justify-center`}
           >
             {checked && (
               <span className="text-white text-[10px]">✓</span>
@@ -259,7 +286,7 @@ function Block({ block }: { block: NotionBlock }) {
         img.caption?.map((t) => t.plain_text).join("") || "";
       return (
         <figure className="my-10">
-          <div className="overflow-hidden rounded-xl border border-[#e8e0d8] bg-[#f0ebe4]">
+          <div className={nc.imgWrap}>
             <img
               src={url}
               alt={caption || "Blog image"}
@@ -268,7 +295,9 @@ function Block({ block }: { block: NotionBlock }) {
             />
           </div>
           {caption && (
-            <figcaption className="text-[13px] font-light text-[#a39990] mt-3 text-center italic">
+            <figcaption
+              className={`text-[13px] font-light mt-3 text-center italic ${surface === "f1" ? "text-gray-500" : "text-[#a39990]"}`}
+            >
               {caption}
             </figcaption>
           )}
@@ -281,7 +310,7 @@ function Block({ block }: { block: NotionBlock }) {
       const url =
         vid.type === "external" ? vid.external.url : vid.file.url;
       return (
-        <div className="my-10 rounded-xl overflow-hidden border border-[#e8e0d8] bg-[#f0ebe4]">
+        <div className={nc.videoWrap}>
           <video src={url} controls className="w-full" />
         </div>
       );
@@ -297,7 +326,7 @@ function Block({ block }: { block: NotionBlock }) {
       if (isImage) {
         return (
           <figure className="my-10">
-            <div className="overflow-hidden rounded-xl border border-[#e8e0d8] bg-[#f0ebe4]">
+            <div className={nc.imgWrap}>
               <img
                 src={url}
                 alt={caption}
@@ -316,11 +345,11 @@ function Block({ block }: { block: NotionBlock }) {
           className="my-6 block group"
           style={{ textDecoration: "none" }}
         >
-          <div className="p-4 border border-[#d5cdc3] rounded-lg hover:border-[#b8ae9f] hover:bg-[#f0ebe4]/30 transition-all flex items-center gap-3">
-            <span className="text-sm font-light text-[#6f655c] group-hover:text-[#4a3f35] transition-colors">
+          <div className={`${nc.fileCard} flex items-center gap-3`}>
+            <span className={`${nc.fileText} transition-colors`}>
               📎 {caption}
             </span>
-            <span className="text-[#a39990] text-xs ml-auto">↗</span>
+            <span className={`${nc.fileArrow} text-xs ml-auto`}>↗</span>
           </div>
         </a>
       );
@@ -333,15 +362,15 @@ function Block({ block }: { block: NotionBlock }) {
         .join("");
       const lang = block.code.language || "";
       return (
-        <div className="my-8 rounded-xl overflow-hidden border border-[#e8e0d8]">
+        <div className={nc.codeOuter}>
           {lang && (
-            <div className="px-4 py-2 bg-[#f0ebe4] border-b border-[#e8e0d8]">
-              <span className="text-xs font-light uppercase tracking-wider text-[#8d857a]">
+            <div className={nc.codeLang}>
+              <span className={nc.codeLangText}>
                 {lang}
               </span>
             </div>
           )}
-          <pre className="p-5 overflow-x-auto text-[13px] leading-6 font-mono font-normal text-[#6f655c] bg-[#faf6f0]">
+          <pre className={nc.pre}>
             <code>{text}</code>
           </pre>
         </div>
@@ -351,8 +380,8 @@ function Block({ block }: { block: NotionBlock }) {
     /* ---------- Quote ---------- */
     case "quote":
       return (
-        <blockquote className="my-8 pl-5 border-l-[3px] border-[#d5cdc3] py-2">
-          <p className="text-[15px] md:text-base font-light text-[#8d857a] italic leading-[1.85]">
+        <blockquote className={nc.quote}>
+          <p className={nc.quoteInner}>
             <RichText items={block.quote.rich_text} />
           </p>
         </blockquote>
@@ -363,11 +392,11 @@ function Block({ block }: { block: NotionBlock }) {
       const icon = block.callout.icon;
       const emoji = icon?.type === "emoji" ? icon.emoji : "";
       return (
-        <div className="my-8 p-5 bg-[#f5f0ea] rounded-xl flex gap-3 items-start border border-[#e8e0d8]">
+        <div className={nc.callout}>
           {emoji && (
             <span className="text-lg flex-none mt-0.5">{emoji}</span>
           )}
-          <div className="text-[15px] leading-[1.85] font-light text-[#6f655c]">
+          <div className={nc.calloutText}>
             <RichText items={block.callout.rich_text} />
           </div>
         </div>
@@ -377,11 +406,11 @@ function Block({ block }: { block: NotionBlock }) {
     /* ---------- Toggle ---------- */
     case "toggle":
       return (
-        <details className="my-6 group border border-[#e8e0d8] rounded-xl overflow-hidden">
-          <summary className="p-4 text-[15px] font-light text-[#4a3f35] cursor-pointer select-none bg-[#fbf7f2] hover:bg-[#f0ebe4] transition-colors">
+        <details className={nc.toggle}>
+          <summary className={nc.toggleSummary}>
             <RichText items={block.toggle.rich_text} />
           </summary>
-          <div className="px-5 pb-4 pt-2 border-t border-[#e8e0d8]">
+          <div className={nc.toggleBody}>
             {children?.map((c) => <Block key={c.id} block={c} />)}
           </div>
         </details>
@@ -401,11 +430,11 @@ function Block({ block }: { block: NotionBlock }) {
           className="my-6 block group"
           style={{ textDecoration: "none" }}
         >
-          <div className="p-4 border border-[#d5cdc3] rounded-lg hover:border-[#b8ae9f] hover:bg-[#f0ebe4]/30 transition-all flex justify-between items-center gap-3">
-            <span className="text-sm font-light text-[#6f655c] truncate group-hover:text-[#4a3f35] transition-colors">
+          <div className={`${nc.bookmarkCard}`}>
+            <span className={`${nc.bookmarkText} transition-colors`}>
               {caption}
             </span>
-            <span className="text-[#a39990] flex-none text-xs">↗</span>
+            <span className={`${nc.fileArrow} flex-none text-xs`}>↗</span>
           </div>
         </a>
       );
@@ -418,7 +447,7 @@ function Block({ block }: { block: NotionBlock }) {
     /* ---------- Embed ---------- */
     case "embed":
       return (
-        <div className="my-10 rounded-xl overflow-hidden border border-[#e8e0d8] bg-[#f0ebe4]">
+        <div className={nc.embed}>
           <iframe
             src={block.embed.url}
             className="w-full min-h-[360px]"
@@ -495,8 +524,14 @@ function groupAndRender(blocks: NotionBlock[]): React.ReactNode[] {
 
 export default function NotionRenderer({
   blocks,
+  surface = "paper",
 }: {
   blocks: NotionBlock[];
+  surface?: NotionSurface;
 }) {
-  return <div className="notion-content">{groupAndRender(blocks)}</div>;
+  return (
+    <NotionSurfaceContext.Provider value={surface}>
+      <div className="notion-content">{groupAndRender(blocks)}</div>
+    </NotionSurfaceContext.Provider>
+  );
 }

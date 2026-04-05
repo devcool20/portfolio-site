@@ -44,21 +44,21 @@ export default async function BlogPostPage({
   const postUrl = `${siteUrl}/blog/${slug}`;
 
   return (
-    <article className="animate-fade-in w-full max-w-[600px]">
-      {/* ---- Cover image (hero) ---- */}
+    <article className="animate-fade-in w-full max-w-[640px] pb-8">
       {post.cover && (
-        <div className="relative w-full overflow-hidden rounded-xl mb-10 bg-[#f0ebe4]">
+        <div className="relative w-full overflow-hidden rounded-xl mb-10 border border-[#1e1e28] bg-[#0a0a0e]">
           <img
             src={post.cover}
-            alt={post.title}
-            className="w-full h-auto max-h-[400px] object-cover"
+            alt=""
+            className="w-full h-auto max-h-[min(420px,55vh)] object-cover"
           />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FF1800]/40 to-transparent" />
         </div>
       )}
 
-      {/* ---- Header ---- */}
       <header className="mb-10">
-        <p className="text-xs font-light uppercase tracking-[0.18em] text-[#a39990] mb-5">
+        <div className="section-label mb-2">Article</div>
+        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 mb-4">
           {post.date
             ? new Date(post.date).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -67,24 +67,23 @@ export default async function BlogPostPage({
               })
             : "Draft"}
         </p>
-        <h1 className="text-[1.75rem] md:text-[2.15rem] font-light leading-[1.25] mb-6 text-[#3a3229] tracking-[-0.01em]">
+        <h1 className="section-heading text-2xl sm:text-3xl md:text-[2.15rem] mb-6 text-white leading-tight">
           {post.title}
         </h1>
         {post.excerpt && (
-          <p className="text-[15px] md:text-base font-light leading-[1.8] text-[#8d857a]">
+          <p className="text-sm md:text-base font-light leading-relaxed text-gray-400 border-l-2 border-[#FF1800]/40 pl-4">
             {post.excerpt}
           </p>
         )}
         <div className="section-divider mt-10" />
       </header>
 
-      {/* ---- Media files from "Files & media" property ---- */}
       {post.mediaFiles.length > 0 && (
         <div className="mb-10 grid grid-cols-2 gap-4">
           {post.mediaFiles.map((url, i) => (
             <div
               key={i}
-              className="overflow-hidden rounded-lg border border-[#e8e0d8] bg-[#f0ebe4]"
+              className="overflow-hidden rounded-lg border border-[#1e1e28] bg-[#0a0a0e]"
             >
               <img
                 src={url}
@@ -97,17 +96,15 @@ export default async function BlogPostPage({
         </div>
       )}
 
-      {/* ---- Body ---- */}
-      <div className="blog-canvas">
-        <NotionRenderer blocks={blocks} />
+      <div className="blog-canvas-f1">
+        <NotionRenderer blocks={blocks} surface="f1" />
       </div>
 
-      {/* ---- Footer ---- */}
-      <footer className="mt-20 pt-8 border-t border-[#e8e0d8]">
-        <div className="flex justify-between items-center">
+      <footer className="mt-16 pt-8 border-t border-[#1e1e28]">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <Link
             href="/blog"
-            className="group inline-flex items-center gap-2 text-sm font-light text-[#8d857a] hover:text-[#4a3f35] transition-colors"
+            className="group inline-flex items-center gap-2 text-sm font-mono uppercase tracking-[0.15em] text-gray-500 hover:text-[#FF1800] transition-colors"
             style={{ textDecoration: "none" }}
           >
             <span
@@ -116,7 +113,7 @@ export default async function BlogPostPage({
             >
               ←
             </span>
-            Back to all posts
+            All posts
           </Link>
           <ShareButton title={post.title} url={postUrl} />
         </div>
