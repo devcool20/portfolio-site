@@ -22,7 +22,7 @@ export async function generateMetadata({
   const data = await getPostBySlug(slug);
   if (!data) return { title: "Post not found" };
   return {
-    title: `${data.post.title} — Divyanshu Sharma`,
+    title: `${data.post.title} - Divyanshu Sharma`,
     description: data.post.excerpt || undefined,
   };
 }
@@ -38,86 +38,66 @@ export default async function BlogPostPage({
   if (!data) notFound();
 
   const { post, blocks } = data;
-
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const postUrl = `${siteUrl}/blog/${slug}`;
 
   return (
-    <article className="animate-fade-in w-full max-w-[640px] pb-8">
-      {post.cover && (
-        <div className="relative w-full overflow-hidden rounded-xl mb-10 border border-[#1e1e28] bg-[#0a0a0e]">
-          <img
-            src={post.cover}
-            alt=""
-            className="w-full h-auto max-h-[min(420px,55vh)] object-cover"
-          />
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FF1800]/40 to-transparent" />
-        </div>
-      )}
+    <article className="blog-post-page pb-12 md:pb-16">
+      <section className="blog-reveal">
+        <div className="telemetry-panel blog-post-shell">
+          <header className="blog-post-compact-header">
+            {post.cover ? (
+              <div className="blog-post-thumb">
+                <img src={post.cover} alt="" className="blog-post-thumb-image" />
+              </div>
+            ) : null}
 
-      <header className="mb-10">
-        <div className="section-label mb-2">Article</div>
-        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 mb-4">
-          {post.date
-            ? new Date(post.date).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })
-            : "Draft"}
-        </p>
-        <h1 className="section-heading text-2xl sm:text-3xl md:text-[2.15rem] mb-6 text-white leading-tight">
-          {post.title}
-        </h1>
-        {post.excerpt && (
-          <p className="text-sm md:text-base font-light leading-relaxed text-gray-400 border-l-2 border-[#FF1800]/40 pl-4">
-            {post.excerpt}
-          </p>
-        )}
-        <div className="section-divider mt-10" />
-      </header>
+            <div className="blog-post-meta">
+              <div className="section-label">Article</div>
+              <time className="blog-post-date" dateTime={post.date ?? undefined}>
+                {post.date
+                  ? new Date(post.date).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : "Draft"}
+              </time>
+              <h1 className="blog-post-heading compact">{post.title}</h1>
+              {post.excerpt ? <p className="blog-post-lead compact">{post.excerpt}</p> : null}
 
-      {post.mediaFiles.length > 0 && (
-        <div className="mb-10 grid grid-cols-2 gap-4">
-          {post.mediaFiles.map((url, i) => (
-            <div
-              key={i}
-              className="overflow-hidden rounded-lg border border-[#1e1e28] bg-[#0a0a0e]"
-            >
-              <img
-                src={url}
-                alt={`${post.title} media ${i + 1}`}
-                className="w-full h-auto object-cover"
-                loading="lazy"
-              />
+              <div className="blog-post-actions">
+                <Link href="/blog" className="blog-stream-cta" style={{ textDecoration: "none" }}>
+                  <span className="signal-dot" />
+                  All posts
+                </Link>
+                <div className="blog-share-wrap">
+                  <ShareButton title={post.title} url={postUrl} />
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
-      )}
+          </header>
 
-      <div className="blog-canvas-f1">
-        <NotionRenderer blocks={blocks} surface="f1" />
-      </div>
+          {post.mediaFiles.length > 0 ? (
+            <div className="blog-inline-media">
+              {post.mediaFiles.slice(0, 4).map((url, index) => (
+                <div key={index} className="blog-inline-media-card">
+                  <img
+                    src={url}
+                    alt={`${post.title} media ${index + 1}`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          ) : null}
 
-      <footer className="mt-16 pt-8 border-t border-[#1e1e28]">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-          <Link
-            href="/blog"
-            className="group inline-flex items-center gap-2 text-sm font-mono uppercase tracking-[0.15em] text-gray-500 hover:text-[#FF1800] transition-colors"
-            style={{ textDecoration: "none" }}
-          >
-            <span
-              aria-hidden
-              className="group-hover:-translate-x-1 transition-transform"
-            >
-              ←
-            </span>
-            All posts
-          </Link>
-          <ShareButton title={post.title} url={postUrl} />
+          <div className="blog-canvas-f1 blog-post-body compact">
+            <NotionRenderer blocks={blocks} surface="f1" />
+          </div>
         </div>
-      </footer>
+      </section>
     </article>
   );
 }

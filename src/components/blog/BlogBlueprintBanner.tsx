@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   HERO_LAYER_REV,
   layerSrc,
@@ -21,10 +21,6 @@ const LAYER12_MOBILE_FALLBACK =
 export default function BlogBlueprintBanner() {
   const narrow = useNarrowViewport();
   const [mobileVerticalFailed, setMobileVerticalFailed] = useState(false);
-
-  useEffect(() => {
-    if (!narrow) setMobileVerticalFailed(false);
-  }, [narrow]);
 
   const layer12Class =
     narrow && mobileVerticalFailed

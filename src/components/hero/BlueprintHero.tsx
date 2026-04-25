@@ -40,18 +40,17 @@ export default function BlueprintHero({
   const sceneRef = useRef<HTMLDivElement>(null);
   /** Camera zoom — must apply to the whole stack, not layer1 alone, or layers drift apart. */
   const layerStackRef = useRef<HTMLDivElement>(null);
+  const layer1Ref = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLDivElement>(null);
   const layer2Ref = useRef<HTMLDivElement>(null);
   const layer3Ref = useRef<HTMLDivElement>(null);
+  const layer2GlowRef = useRef<HTMLDivElement>(null);
+  const layer3GlowRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
   const [navDone, setNavDone] = useState(false);
   const narrow = useNarrowViewport();
   /** If vertical mobile assets fail to load, use wide layers + contain (aligned stack). */
   const [mobileVerticalFailed, setMobileVerticalFailed] = useState(false);
-
-  useEffect(() => {
-    if (!narrow) setMobileVerticalFailed(false);
-  }, [narrow]);
 
   const layer12Class =
     narrow && mobileVerticalFailed
@@ -80,12 +79,12 @@ export default function BlueprintHero({
     }
 
     const ctx = gsap.context(() => {
-      const ease = "power2.inOut";
+      const ease = "sine.inOut";
       const easeOut = "power2.out";
       const zoomPeak =
         typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches
-          ? 1.02
-          : 1.05;
+          ? 1.03
+          : 1.065;
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -100,51 +99,142 @@ export default function BlueprintHero({
         },
       });
 
+      gsap.set(layer1Ref.current, {
+        opacity: 1,
+        scale: 1.035,
+        filter: "brightness(0.9) saturate(0.92) contrast(1.04)",
+      });
+      gsap.set(layer2Ref.current, {
+        opacity: 0,
+        scale: 1.055,
+        filter: "blur(18px) brightness(1.18) saturate(1.12)",
+      });
+      gsap.set(layer3Ref.current, {
+        opacity: 0,
+        scale: 1.035,
+        filter: "blur(24px) brightness(1.22) saturate(1.08)",
+      });
+      gsap.set([layer2GlowRef.current, layer3GlowRef.current], { opacity: 0 });
+
       // ── State 0 (0–10%): only layer 1; subtle scene depth idle ──
       tl.fromTo(
         sceneRef.current,
         { rotateX: 0, transformPerspective: 1200 },
-        { rotateX: 2.5, duration: 0.1, ease },
+        { rotateX: 2.2, duration: 0.12, ease },
+        0,
+      );
+      tl.to(
+        layer1Ref.current,
+        {
+          scale: 1,
+          filter: "brightness(1) saturate(1) contrast(1)",
+          duration: 0.18,
+          ease,
+        },
         0,
       );
 
       // ── State 1 (10–40%): layer 2 fades in; “camera” pushes to 1.05 on base art ──
       tl.fromTo(
         layer2Ref.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.3, ease },
-        0.1,
+        { opacity: 0, scale: 1.055, filter: "blur(18px) brightness(1.18) saturate(1.12)" },
+        {
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px) brightness(1.03) saturate(1.04)",
+          duration: 0.34,
+          ease,
+        },
+        0.12,
+      );
+      tl.to(
+        layer1Ref.current,
+        {
+          opacity: 0.74,
+          filter: "brightness(0.96) saturate(0.96) contrast(1.02)",
+          duration: 0.3,
+          ease,
+        },
+        0.14,
+      );
+      tl.fromTo(
+        layer2GlowRef.current,
+        { opacity: 0, scale: 0.96 },
+        { opacity: 0.55, scale: 1.06, duration: 0.16, ease: "power2.out" },
+        0.15,
+      );
+      tl.to(
+        layer2GlowRef.current,
+        { opacity: 0, scale: 1.12, duration: 0.2, ease: "power1.inOut" },
+        0.31,
       );
       tl.fromTo(
         layerStackRef.current,
         { scale: 1, transformOrigin: "50% 50%" },
-        { scale: zoomPeak, duration: 0.23, ease },
-        0.1,
+        { scale: zoomPeak, duration: 0.28, ease },
+        0.12,
       );
       tl.fromTo(
         sceneRef.current,
-        { rotateX: 2.5 },
-        { rotateX: 0.8, duration: 0.3, ease },
-        0.1,
+        { rotateX: 2.2 },
+        { rotateX: 0.9, duration: 0.34, ease },
+        0.12,
       );
 
       // ── State 2 (50–80%): layer 3 in; zoom back to 1 (full blueprint + driver) ──
       tl.fromTo(
         layer3Ref.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.3, ease },
+        { opacity: 0, scale: 1.035, filter: "blur(24px) brightness(1.22) saturate(1.08)" },
+        {
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px) brightness(1) saturate(1)",
+          duration: 0.32,
+          ease,
+        },
         0.5,
+      );
+      tl.to(
+        layer2Ref.current,
+        {
+          opacity: 0.84,
+          filter: "blur(0px) brightness(0.99) saturate(0.98)",
+          duration: 0.28,
+          ease,
+        },
+        0.52,
+      );
+      tl.to(
+        layer1Ref.current,
+        {
+          opacity: 0.58,
+          filter: "brightness(0.92) saturate(0.92)",
+          duration: 0.28,
+          ease,
+        },
+        0.52,
+      );
+      tl.fromTo(
+        layer3GlowRef.current,
+        { opacity: 0, scale: 0.94 },
+        { opacity: 0.42, scale: 1.05, duration: 0.15, ease: "power2.out" },
+        0.56,
+      );
+      tl.to(
+        layer3GlowRef.current,
+        { opacity: 0, scale: 1.12, duration: 0.22, ease: "power1.inOut" },
+        0.68,
       );
       tl.fromTo(
         layerStackRef.current,
         { scale: zoomPeak },
-        { scale: 1, duration: 0.3, ease },
+        { scale: 1.01, duration: 0.34, ease },
         0.5,
       );
       tl.fromTo(
         sceneRef.current,
-        { rotateX: 0.8 },
-        { rotateX: 0, duration: 0.3, ease },
+        { rotateX: 0.9 },
+        { rotateX: 0, duration: 0.34, ease },
         0.5,
       );
 
@@ -152,7 +242,7 @@ export default function BlueprintHero({
         nameRef.current,
         { opacity: 1, y: 0 },
         { opacity: 0, y: -20, duration: 0.15, ease: easeOut },
-        0.48,
+        0.5,
       );
 
       // ── State 3 (~77%+): nav when layer3 ≥ ~90% opacity; stagger from edges ──
@@ -191,7 +281,7 @@ export default function BlueprintHero({
 
   const handleClick = (s: (typeof SECTIONS)[0]) => {
     if ("href" in s && s.href) {
-      window.location.href = s.href;
+      window.location.assign(s.href);
       return;
     }
     if (s.section && onNavigate) {
@@ -257,7 +347,10 @@ export default function BlueprintHero({
             style={{ transformOrigin: "50% 50%" }}
           >
             <div className="absolute inset-0 z-[10] h-full w-full min-h-0 overflow-hidden">
-              <div className="relative h-full min-h-0 w-full">
+              <div
+                ref={layer1Ref}
+                className="relative h-full min-h-0 w-full will-change-[transform,filter,opacity]"
+              >
                 <Image
                   key={`l1-${narrow ? "m" : "d"}-${mobileVerticalFailed ? "fb" : "v"}-${HERO_LAYER_REV}`}
                   src={srcL1}
@@ -275,7 +368,7 @@ export default function BlueprintHero({
             <div
               ref={layer2Ref}
               className="absolute inset-0 z-[20] h-full w-full min-h-0 overflow-hidden"
-              style={{ opacity: 0, willChange: "opacity" }}
+              style={{ opacity: 0, willChange: "transform, filter, opacity" }}
             >
               <div className="relative h-full min-h-0 w-full">
                 <Image
@@ -290,11 +383,22 @@ export default function BlueprintHero({
                 />
               </div>
             </div>
+            <div
+              ref={layer2GlowRef}
+              className="absolute inset-0 z-[24] pointer-events-none"
+              style={{
+                opacity: 0,
+                background:
+                  "radial-gradient(circle at 50% 48%, rgba(255,240,220,0.28) 0%, rgba(255,24,0,0.12) 24%, rgba(255,24,0,0) 62%)",
+                mixBlendMode: "screen",
+                filter: "blur(34px)",
+              }}
+            />
 
             <div
               ref={layer3Ref}
               className="absolute inset-0 z-[30] h-full w-full min-h-0 overflow-hidden"
-              style={{ opacity: 0, willChange: "opacity" }}
+              style={{ opacity: 0, willChange: "transform, filter, opacity" }}
             >
               <div className="relative h-full min-h-0 w-full">
                 <Image
@@ -308,6 +412,17 @@ export default function BlueprintHero({
                 />
               </div>
             </div>
+            <div
+              ref={layer3GlowRef}
+              className="absolute inset-0 z-[34] pointer-events-none"
+              style={{
+                opacity: 0,
+                background:
+                  "radial-gradient(circle at 50% 52%, rgba(255,250,245,0.24) 0%, rgba(255,84,38,0.12) 22%, rgba(255,24,0,0) 58%)",
+                mixBlendMode: "screen",
+                filter: "blur(40px)",
+              }}
+            />
           </div>
         </div>
 
