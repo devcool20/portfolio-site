@@ -4,8 +4,6 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SmartTracingBeam from "@/components/ui/smart-tracing-beam";
-import BlogBlueprintBanner from "@/components/blog/BlogBlueprintBanner";
 import { tabs } from "@/lib/data";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -17,19 +15,34 @@ export default function BlogLayout({
 }) {
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const enterOnce = { toggleActions: "play none none none" as const };
+      gsap.utils.toArray<HTMLElement>(".slate-line").forEach((line) => {
+        gsap.fromTo(line, { "--write": 0 }, {
+          "--write": 1,
+          duration: 0.75,
+          ease: "power1.out",
+          scrollTrigger: {
+            trigger: line,
+            start: "top 86%",
+            once: true,
+          },
+        });
+      });
 
-      gsap.utils.toArray<HTMLElement>(".blog-reveal").forEach((element, index) => {
+      gsap.utils.toArray<HTMLElement>(".slate-gif-frame").forEach((gif) => {
         gsap.fromTo(
-          element,
-          { opacity: 0, y: 20 },
+          gif,
+          { opacity: 0, y: 28, rotate: -5, scale: 0.92 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.55,
-            delay: index * 0.03,
+            rotate: -1,
+            scale: 1,
             ease: "power2.out",
-            scrollTrigger: { trigger: element, start: "top 90%", ...enterOnce },
+            scrollTrigger: {
+              trigger: gif,
+              start: "top 86%",
+              once: true,
+            },
           },
         );
       });
@@ -39,50 +52,25 @@ export default function BlogLayout({
   }, []);
 
   return (
-    <div className="blog-shell min-h-screen text-gray-300">
-      <div className="mx-auto max-w-[1320px] px-4 py-6 sm:px-6 md:px-8">
-        <div className="blog-layout-grid">
-          <aside className="blog-sidebar-column">
-            <div className="telemetry-panel blog-sidebar-panel blog-reveal">
-              <div className="blog-sidebar-copy">
-                <p className="section-label">Pit Wall</p>
-                <h2 className="panel-title">Field Notes</h2>
-                <p className="panel-copy">
-                  Dispatches, build logs, and longer notes from the same world as the homepage.
-                </p>
-              </div>
-
-              <div className="blog-sidebar-banner">
-                <BlogBlueprintBanner />
-              </div>
-
-              <nav className="blog-side-nav" aria-label="Site sections">
-                {tabs.map((tab) => {
-                  const href = tab.id === "blog" ? "/blog" : `/?tab=${tab.id}`;
-                  const isActive = tab.id === "blog";
-                  return (
-                    <Link
-                      key={tab.id}
-                      href={href}
-                      className={`blog-side-link ${isActive ? "active" : ""}`}
-                      style={{ textDecoration: "none" }}
-                    >
-                      <span className="blog-side-link-dot" />
-                      <span>{tab.label}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
-            </div>
-          </aside>
-
-          <main className="blog-main-column">
-            <SmartTracingBeam className="blog-content-shell">
-              {children}
-            </SmartTracingBeam>
-          </main>
-        </div>
+    <div className="slate-track blog-slate min-h-screen">
+      <div className="slate-top-note">
+        <Link href="/" className="blog-home-link">
+          Clean Slate
+        </Link>
+        <nav className="blog-slate-nav" aria-label="Site sections">
+          {tabs.map((tab) => (
+            <Link
+              key={tab.id}
+              href={tab.id === "blog" ? "/blog" : `/#${tab.id}`}
+              aria-current={tab.id === "blog" ? "page" : undefined}
+            >
+              {tab.label}
+            </Link>
+          ))}
+        </nav>
       </div>
+
+      <main className="blog-slate-main">{children}</main>
     </div>
   );
 }

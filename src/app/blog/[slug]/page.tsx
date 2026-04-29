@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { getBlogPosts, getPostBySlug } from "@/lib/notion";
 import NotionRenderer from "@/components/NotionRenderer";
 import ShareButton from "@/components/ShareButton";
@@ -42,62 +43,71 @@ export default async function BlogPostPage({
   const postUrl = `${siteUrl}/blog/${slug}`;
 
   return (
-    <article className="blog-post-page pb-12 md:pb-16">
-      <section className="blog-reveal">
-        <div className="telemetry-panel blog-post-shell">
-          <header className="blog-post-compact-header">
-            {post.cover ? (
-              <div className="blog-post-thumb">
-                <img src={post.cover} alt="" className="blog-post-thumb-image" />
-              </div>
-            ) : null}
+    <article className="slate-section blog-post-section accent-violet">
+      <div className="slate-heading">
+        <span>01</span>
+        <p>Article</p>
+        <div className="slate-gif-frame">
+          <img src="/gif/f1(2).gif" alt="" loading="lazy" />
+        </div>
+      </div>
 
-            <div className="blog-post-meta">
-              <div className="section-label">Article</div>
-              <time className="blog-post-date" dateTime={post.date ?? undefined}>
-                {post.date
-                  ? new Date(post.date).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
-                  : "Draft"}
-              </time>
-              <h1 className="blog-post-heading compact">{post.title}</h1>
-              {post.excerpt ? <p className="blog-post-lead compact">{post.excerpt}</p> : null}
+      <div className="slate-page blog-slate-page">
+        <div className="slate-rule" aria-hidden="true" />
 
-              <div className="blog-post-actions">
-                <Link href="/blog" className="blog-stream-cta" style={{ textDecoration: "none" }}>
-                  <span className="signal-dot" />
-                  All posts
-                </Link>
-                <div className="blog-share-wrap">
-                  <ShareButton title={post.title} url={postUrl} />
-                </div>
-              </div>
-            </div>
-          </header>
-
-          {post.mediaFiles.length > 0 ? (
-            <div className="blog-inline-media">
-              {post.mediaFiles.slice(0, 4).map((url, index) => (
-                <div key={index} className="blog-inline-media-card">
-                  <img
-                    src={url}
-                    alt={`${post.title} media ${index + 1}`}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              ))}
+        <header className="blog-post-slate-header">
+          {post.cover ? (
+            <div className="blog-post-cover">
+              <img src={post.cover} alt="" loading="lazy" />
             </div>
           ) : null}
 
-          <div className="blog-canvas-f1 blog-post-body compact">
-            <NotionRenderer blocks={blocks} surface="f1" />
+          <div>
+            <p className="slate-kicker">
+              {post.date
+                ? new Date(post.date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "Draft"}
+            </p>
+            <h1 className="slate-title">{post.title}</h1>
+            {post.excerpt ? (
+              <div className="slate-line" style={{ "--write": 1 } as CSSProperties}>
+                <p className="slate-line-copy">{post.excerpt}</p>
+              </div>
+            ) : null}
+
+            <div className="slate-actions blog-post-actions">
+              <Link href="/blog" className="slate-choice">
+                All posts
+              </Link>
+              <div className="blog-share-wrap">
+                <ShareButton title={post.title} url={postUrl} />
+              </div>
+            </div>
           </div>
+        </header>
+
+        {post.mediaFiles.length > 0 ? (
+          <div className="blog-inline-media">
+            {post.mediaFiles.slice(0, 4).map((url, index) => (
+              <div key={index} className="blog-inline-media-card">
+                <img
+                  src={url}
+                  alt={`${post.title} media ${index + 1}`}
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        <div className="blog-post-body-slate">
+          <NotionRenderer blocks={blocks} surface="paper" />
         </div>
-      </section>
+      </div>
     </article>
   );
 }

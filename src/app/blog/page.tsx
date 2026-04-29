@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { getBlogPosts } from "@/lib/notion";
 
 export const revalidate = 60;
@@ -8,52 +9,42 @@ export default async function BlogListPage() {
   const posts = await getBlogPosts();
 
   return (
-    <div className="blog-list-page pb-12 md:pb-16">
-      <section className="blog-reveal">
-        <div className="telemetry-panel blog-page-intro">
-          <div className="blog-intro-head">
-            <div>
-              <div className="section-label">Field Notes</div>
-              <h1 className="blog-page-title">Blog</h1>
-            </div>
-            <div className="blog-intro-stat">
-              <span>{posts.length}</span>
-              <p>Published notes</p>
-            </div>
-          </div>
-
-          <p className="blog-page-deck">
-            Long-form write-ups, product diaries, and build logs from the garage.
-            A quieter, tighter reading surface with the same visual language as the rest of the site.
-          </p>
+    <section className="slate-section blog-index-section accent-sky">
+      <div className="slate-heading">
+        <span>{String(posts.length).padStart(2, "0")}</span>
+        <p>Blog</p>
+        <div className="slate-gif-frame">
+          <img src="/gif/f1.gif" alt="" loading="lazy" />
         </div>
-      </section>
+      </div>
 
-      {posts.length === 0 ? (
-        <section className="blog-reveal mt-6">
-          <div className="telemetry-panel blog-empty-state">
-            <p className="panel-kicker">Status</p>
-            <p className="panel-copy">No posts yet. Fresh notes will show up here soon.</p>
-          </div>
-        </section>
-      ) : (
-        <section className="blog-reveal mt-6">
-          <div className="blog-index-head">
-            <div className="section-label">Latest Entries</div>
-            <p className="blog-index-note">Choose a note to open the full article.</p>
-          </div>
+      <div className="slate-page blog-slate-page">
+        <div className="slate-rule" aria-hidden="true" />
+        <p className="slate-kicker">Long-form notes, build logs, and product diaries.</p>
+        <h1 className="slate-title">Field Notes</h1>
 
-          <div className="blog-card-grid">
+        {posts.length === 0 ? (
+          <div className="slate-line" style={{ "--write": 1 } as CSSProperties}>
+            <p className="slate-line-copy">No posts yet. Fresh notes will show up here soon.</p>
+          </div>
+        ) : (
+          <div className="blog-note-grid">
             {posts.map((post, index) => (
               <Link
                 key={post.id}
                 href={`/blog/${post.slug}`}
-                className="telemetry-panel blog-card-item"
-                style={{ textDecoration: "none" }}
+                className="blog-note-card slate-line"
+                style={{ "--write": 0 } as CSSProperties}
               >
-                <div className="blog-card-topline">
-                  <span className="blog-stream-index">{String(index + 1).padStart(2, "0")}</span>
-                  <time className="blog-post-date" dateTime={post.date ?? undefined}>
+                {post.cover ? (
+                  <span className="blog-note-cover">
+                    <img src={post.cover} alt="" loading="lazy" />
+                  </span>
+                ) : null}
+
+                <span className="blog-note-copy">
+                  <span className="blog-note-meta">
+                    {String(index + 1).padStart(2, "0")} /{" "}
                     {post.date
                       ? new Date(post.date).toLocaleDateString("en-US", {
                           year: "numeric",
@@ -61,31 +52,16 @@ export default async function BlogListPage() {
                           day: "numeric",
                         })
                       : "Draft"}
-                  </time>
-                </div>
-
-                {post.cover ? (
-                  <div className="blog-card-media">
-                    <img src={post.cover} alt="" className="blog-card-image" />
-                  </div>
-                ) : null}
-
-                <div className="blog-card-copy">
-                  <h2 className="blog-card-title">{post.title}</h2>
-                  <p className="blog-card-excerpt">
-                    {post.excerpt?.trim() || "Open the note to read the full write-up."}
-                  </p>
-                </div>
-
-                <span className="blog-stream-cta">
-                  <span className="signal-dot" />
-                  Open article
+                  </span>
+                  <strong>{post.title}</strong>
+                  <span>{post.excerpt?.trim() || "Open the note to read the full write-up."}</span>
+                  <em>Open article</em>
                 </span>
               </Link>
             ))}
           </div>
-        </section>
-      )}
-    </div>
+        )}
+      </div>
+    </section>
   );
 }
