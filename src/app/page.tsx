@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import BlueprintHero from "@/components/hero/BlueprintHero";
+import LinkPreview from "@/components/ui/LinkPreview";
 import { useEffect, useRef } from "react";
 import type { CSSProperties } from "react";
 import gsap from "gsap";
@@ -19,6 +20,7 @@ type SlateAction = {
 type SlateProject = {
   title: string;
   href: string;
+  previewImage?: string;
   note: string;
 };
 
@@ -85,26 +87,31 @@ const slateSections: SlateSectionData[] = [
       {
         title: "projF1",
         href: "https://projf1.online/",
+        previewImage: "/preview-projects/projf1.png",
         note: "A Formula 1 weekend command center with race context, predictions, community, and live fan surfaces.",
       },
       {
         title: "Loql",
         href: "https://loql.in/",
+        previewImage: "/preview-projects/loql.png",
         note: "A neighborhood rental marketplace built around trust, nearby discovery, and QR handshakes.",
       },
       {
         title: "ProofEstate",
         href: "https://proof-estate.vercel.app/",
+        previewImage: "/preview-projects/proofestate.png",
         note: "A Solana real-estate tokenization protocol for verified fractional ownership and yield rails.",
       },
       {
         title: "Sales Doc",
         href: "https://salesdoc.vercel.app/",
+        previewImage: "/preview-projects/salesdoc.png",
         note: "A sales-call analysis product that turns conversations into recommendations for teams.",
       },
       {
         title: "FinStream",
         href: "https://github.com/devcool20/fin-stream",
+        previewImage: "/preview-projects/finstream.png",
         note: "A real-time financial news stream with Kafka, sentiment analysis, and WebSocket delivery.",
       },
     ],
@@ -211,7 +218,16 @@ function SlateSection({ section }: { section: SlateSectionData }) {
                 style={{ "--write": 0 } as CSSProperties}
               >
                 <div className="project-written">
-                  <h3>{project.title}</h3>
+                  <h3>
+                    <LinkPreview
+                      className="project-title-link"
+                      imageSrc={project.previewImage}
+                      title={project.title}
+                      url={project.href}
+                    >
+                      {project.title}
+                    </LinkPreview>
+                  </h3>
                   <p>{project.note}</p>
                   <Link href={project.href} target="_blank" rel="noreferrer" className="project-open">
                     Open project
@@ -287,24 +303,6 @@ function SlateAnimations() {
               trigger: gif.closest(".slate-section"),
               start: "top 72%",
               once: true,
-            },
-          },
-        );
-      });
-
-      gsap.utils.toArray<HTMLElement>(".slate-actions").forEach((actions) => {
-        gsap.fromTo(
-          actions,
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: actions,
-              start: "top 88%",
-              end: "top 68%",
-              scrub: true,
             },
           },
         );

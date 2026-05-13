@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+@font-face {
+    font-family: "Beachday";
+    src:
+        url("/fonts/beachday.otf") format("opentype"),
+        url("/fonts/beachday.ttf") format("truetype");
+    font-display: block;
+    font-style: normal;
+    font-weight: 400;
+}
+
 :root {
     --carbon-black: #060608;
     --racing-red: #ff1800;
@@ -11,22 +21,22 @@
     --slate-ink: #22201f;
     --slate-muted: #5f594d;
     --slate-line: rgba(64, 73, 78, 0.16);
-    --font-technical:
-        var(--font-technical), "IBM Plex Mono", "Courier New", "Courier",
-        monospace;
-    --font-technical-alt:
-        var(--font-technical-alt), "Courier Prime", "Courier New", monospace;
-    --font-gardein:
-        var(--font-technical), "IBM Plex Mono", "Courier New", "Courier",
-        monospace;
+    --font-app: "Beachday", "Helvetica Neue", Arial, sans-serif;
+    --font-technical: var(--font-app);
+    --font-technical-alt: var(--font-app);
+    --font-gardein: var(--font-app);
     --pencil-cursor:
         url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cg transform='rotate(-35 24 24)'%3E%3Cpath d='M8 22h26v5H8z' fill='%23f2c14e'/%3E%3Cpath d='M31 22h5v5h-5z' fill='%23e95d53'/%3E%3Cpath d='M36 22h4v5h-4z' fill='%23f6ead2'/%3E%3Cpath d='M4 24.5 8 22v5z' fill='%234a3328'/%3E%3C/g%3E%3C/svg%3E")
             4 24,
         auto;
 }
 
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
+    font-family: var(--font-app) !important;
+    font-synthesis: none;
 }
 
 html {
@@ -40,7 +50,8 @@ body {
     background: var(--carbon-black);
     color: var(--foreground);
     cursor: auto;
-    font-family: var(--font-technical);
+    font-family: var(--font-app) !important;
+    font-synthesis: none;
     line-height: 1.6;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -63,10 +74,15 @@ a {
 }
 
 .font-mono {
-    font-family: var(--font-technical) !important;
+    font-family: var(--font-app) !important;
 }
 
-/* Ensure all text elements use technical font */
+.font-sans,
+.font-serif {
+    font-family: var(--font-app) !important;
+}
+
+/* Ensure all text elements use Beachday. */
 h1,
 h2,
 h3,
@@ -80,27 +96,29 @@ button,
 input,
 textarea,
 select,
-label {
-    font-family: var(--font-technical);
+label,
+code,
+pre {
+    font-family: var(--font-app) !important;
 }
 
 /* Technical drawing style font weights */
 h1 {
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.02em;
 }
 h2 {
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0.02em;
 }
 h3 {
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0.01em;
 }
 h4,
 h5,
 h6 {
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: 0.01em;
 }
 
@@ -115,7 +133,7 @@ h6 {
     color: var(--text-primary);
     font-family: var(--font-technical);
     font-size: 2rem;
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: 0.02em;
     line-height: 1.2;
 }
@@ -179,7 +197,7 @@ h6 {
 .slate-top-note span {
     font-family: var(--font-technical);
     font-size: 0.72rem;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0.22em;
     text-transform: uppercase;
 }
@@ -189,7 +207,7 @@ h6 {
     color: var(--slate-muted);
     font-family: var(--font-technical);
     font-size: 1.2rem;
-    font-weight: 500;
+    font-weight: 400;
 }
 
 .slate-section {
@@ -237,16 +255,16 @@ h6 {
     color: var(--accent);
     font-family: var(--font-technical);
     font-size: clamp(2.5rem, 5.5vw, 5rem);
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.02em;
-    line-height: 0.85;
+    line-height: 0.95;
 }
 
 .slate-heading p {
     margin: 0;
     font-family: var(--font-technical);
     font-size: 0.74rem;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0.24em;
     text-transform: uppercase;
 }
@@ -286,10 +304,15 @@ h6 {
 }
 
 .slate-page {
+    --slate-rule-x: clamp(1.8rem, 4vw, 3rem);
+    --slate-content-gap: clamp(2.25rem, 3vw, 3.4rem);
     position: relative;
     min-height: 72vh;
     overflow: hidden;
-    padding: clamp(1.8rem, 3.5vw, 2.6rem);
+    padding: clamp(1.8rem, 3.5vw, 2.6rem)
+        clamp(1.8rem, 3.5vw, 2.6rem)
+        clamp(1.8rem, 3.5vw, 2.6rem)
+        calc(var(--slate-rule-x) + var(--slate-content-gap));
     border: 2px solid rgba(44, 40, 36, 0.16);
     border-radius: 8px;
     background:
@@ -305,7 +328,7 @@ h6 {
         ),
         var(--slate-paper);
     background-position:
-        clamp(1.8rem, 4vw, 3rem) 0,
+        var(--slate-rule-x) 0,
         0 0,
         0 0;
     box-shadow:
@@ -315,7 +338,7 @@ h6 {
 
 .slate-rule {
     position: absolute;
-    inset: 0 auto 0 clamp(1.5rem, 4vw, 3rem);
+    inset: 0 auto 0 var(--slate-rule-x);
     width: 2px;
     background: rgba(255, 103, 93, 0.18);
 }
@@ -338,9 +361,9 @@ h6 {
     color: #1c1a18;
     font-family: var(--font-technical);
     font-size: clamp(2rem, 5vw, 4.4rem);
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.02em;
-    line-height: 1.05;
+    line-height: 1.14;
     text-shadow: 0 2px 0 rgba(255, 255, 255, 0.68);
 }
 
@@ -382,6 +405,8 @@ h6 {
     flex-wrap: wrap;
     gap: 0.8rem;
     margin-top: clamp(1.7rem, 4vw, 2.6rem);
+    opacity: 1;
+    transform: none;
 }
 
 .slate-choice,
@@ -397,7 +422,7 @@ h6 {
     cursor: pointer;
     font-family: var(--font-technical);
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0.1em;
     padding: 0.72rem 0.95rem;
     text-decoration: none;
@@ -419,6 +444,7 @@ h6 {
 }
 
 .project-entry {
+    overflow: visible;
     min-height: 8.1rem;
     padding: 0.72rem 0 0.98rem;
     border-bottom: 2px dashed color-mix(in srgb, var(--accent), transparent 70%);
@@ -434,9 +460,77 @@ h6 {
     color: var(--accent);
     font-family: var(--font-technical);
     font-size: clamp(1.65rem, 3vw, 2.55rem);
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.01em;
-    line-height: 1;
+    line-height: 1.12;
+}
+
+.project-title-link {
+    position: relative;
+    color: inherit;
+    display: inline-block;
+    text-decoration: none;
+    text-shadow: inherit;
+    transition:
+        color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.project-title-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.04em;
+    height: 0.08em;
+    background: currentColor;
+    opacity: 0.2;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.18s ease;
+}
+
+.project-title-link:hover,
+.project-title-link:focus-visible {
+    color: color-mix(in srgb, var(--accent), #15110d 18%);
+    outline: none;
+    transform: translateY(-1px) rotate(-0.35deg);
+}
+
+.project-title-link:hover::after,
+.project-title-link:focus-visible::after {
+    transform: scaleX(1);
+}
+
+.link-preview-card {
+    position: fixed;
+    z-index: 1000;
+    width: min(25rem, calc(100vw - 2rem));
+    pointer-events: none;
+    border: 2px solid rgba(33, 29, 24, 0.34);
+    border-radius: 0;
+    background: #f8f3e6;
+    box-shadow:
+        10px 10px 0 color-mix(in srgb, var(--accent), transparent 42%),
+        0 18px 44px rgba(28, 22, 14, 0.22);
+    overflow: visible;
+    translate: -50% calc(-100% - 1rem);
+}
+
+.link-preview-image-wrap {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background:
+        linear-gradient(rgba(64, 73, 78, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(64, 73, 78, 0.06) 1px, transparent 1px),
+        #f8f3e6;
+    background-size: 22px 22px;
+}
+
+.link-preview-image {
+    object-fit: contain;
+    filter: saturate(1.04) contrast(0.98);
 }
 
 .project-written p {
@@ -563,9 +657,12 @@ h6 {
     }
 
     .slate-page {
+        --slate-rule-x: 1.5rem;
+        --slate-content-gap: 1.2rem;
         min-height: auto;
         overflow: visible;
-        padding: 2rem 1.5rem 2.5rem;
+        padding: 2rem 1.5rem 2.5rem
+            calc(var(--slate-rule-x) + var(--slate-content-gap));
         background:
             linear-gradient(
                 90deg,
@@ -579,13 +676,9 @@ h6 {
             ),
             var(--slate-paper);
         background-position:
-            1.5rem 0,
+            var(--slate-rule-x) 0,
             0 0,
             0 0;
-    }
-
-    .slate-rule {
-        inset: 0 auto 0 1.2rem;
     }
 
     .slate-title {
@@ -651,7 +744,10 @@ h6 {
     }
 
     .slate-page {
-        padding: 1.5rem 1rem 2rem;
+        --slate-rule-x: 1rem;
+        --slate-content-gap: 0.9rem;
+        padding: 1.5rem 1rem 2rem
+            calc(var(--slate-rule-x) + var(--slate-content-gap));
         background:
             linear-gradient(
                 90deg,
@@ -665,13 +761,9 @@ h6 {
             ),
             var(--slate-paper);
         background-position:
-            1rem 0,
+            var(--slate-rule-x) 0,
             0 0,
             0 0;
-    }
-
-    .slate-rule {
-        inset: 0 auto 0 0.8rem;
     }
 
     .slate-title {
@@ -716,7 +808,7 @@ h6 {
 
 .blog-home-link {
     color: #1f1c19;
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: 0.2em;
     text-decoration: none;
     text-transform: uppercase;
@@ -735,7 +827,7 @@ h6 {
     border-radius: 8px;
     color: #292520;
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.12em;
     padding: 0.42rem 0.62rem;
     text-decoration: none;
@@ -836,7 +928,7 @@ h6 {
 .blog-note-meta {
     color: var(--accent);
     font-size: 0.78rem;
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: 0.14em;
     text-transform: uppercase;
 }
@@ -846,8 +938,8 @@ h6 {
     display: -webkit-box;
     overflow: hidden;
     font-size: clamp(1.25rem, 2vw, 1.65rem);
-    font-weight: 800;
-    line-height: 1.05;
+    font-weight: 400;
+    line-height: 1.16;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -869,7 +961,7 @@ h6 {
     color: var(--accent);
     font-size: 0.82rem;
     font-style: normal;
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: 0.12em;
     text-transform: uppercase;
 }
@@ -916,7 +1008,7 @@ h6 {
     cursor: var(--pencil-cursor);
     font-family: var(--font-technical);
     font-size: 0.75rem;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.1em;
     padding: 0.72rem 0.95rem;
     text-transform: uppercase;
@@ -957,9 +1049,9 @@ h6 {
 .blog-post-body-slate .notion-content :is(h2, h3, h4) {
     color: #181612;
     font-family: var(--font-technical);
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.02em;
-    line-height: 1.12;
+    line-height: 1.2;
 }
 
 .blog-post-body-slate .notion-content a {
