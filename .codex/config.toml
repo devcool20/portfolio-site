@@ -1,0 +1,3 @@
+[mcp_servers.stitch]
+args = ["mcp-servers/stitch/index.js"]
+command = "node"

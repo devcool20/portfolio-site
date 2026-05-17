@@ -12,6 +12,7 @@ const SECTIONS = [
   { label: "ABOUT", section: "about" },
   { label: "SKILLS", section: "skills" },
   { label: "PROJECTS", section: "projects" },
+  { label: "OSS", section: "open-source" },
   { label: "EXP", section: "experience" },
   { label: "BLOG", href: "/blog" },
   { label: "CONTACT", section: "contact" },

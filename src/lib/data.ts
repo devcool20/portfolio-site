@@ -3,6 +3,7 @@ export const tabs = [
   { id: "blog", label: "blog", href: "/blog" },
   { id: "skills", label: "skills" },
   { id: "projects", label: "projects" },
+  { id: "open-source", label: "open source" },
   { id: "experience", label: "experience" },
   { id: "contact", label: "contact" },
 ];

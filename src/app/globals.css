@@ -235,6 +235,10 @@ h6 {
     --accent: #2387ff;
 }
 
+.accent-lime {
+    --accent: #4b9f62;
+}
+
 .accent-violet {
     --accent: #8b5cff;
 }
@@ -368,7 +372,8 @@ h6 {
 }
 
 .slate-copy,
-.project-ledger {
+.project-ledger,
+.open-source-ledger {
     position: relative;
     display: grid;
     gap: 1.06rem;
@@ -383,7 +388,8 @@ h6 {
 }
 
 .slate-line-copy,
-.project-written {
+.project-written,
+.open-source-written {
     display: block;
     max-width: 74rem;
     clip-path: inset(0 calc((1 - var(--write)) * 100%) 0 0);
@@ -542,6 +548,234 @@ h6 {
     justify-self: start;
     margin-top: 0.35rem;
     font-size: 0.68rem;
+}
+
+.open-source-ledger {
+    gap: clamp(1rem, 2vw, 1.35rem);
+}
+
+.open-source-stats {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: clamp(0.3rem, 1vw, 0.75rem);
+}
+
+.open-source-stats::before {
+    content: "";
+    position: absolute;
+    inset: -0.55rem;
+    z-index: -1;
+    border-radius: 8px;
+    background:
+        linear-gradient(45deg, rgba(34, 32, 31, 0.08) 25%, transparent 25% 75%, rgba(34, 32, 31, 0.08) 75%),
+        linear-gradient(45deg, rgba(34, 32, 31, 0.08) 25%, transparent 25% 75%, rgba(34, 32, 31, 0.08) 75%);
+    background-position:
+        0 0,
+        8px 8px;
+    background-size: 16px 16px;
+    opacity: 0.36;
+}
+
+.open-source-stat {
+    min-width: 0;
+    padding: 0.78rem 0.85rem;
+    border: 2px solid color-mix(in srgb, var(--accent), transparent 58%);
+    border-radius: 8px;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 46%),
+        color-mix(in srgb, var(--accent), #f5eddc 88%);
+    box-shadow: 0 12px 24px rgba(45, 36, 22, 0.08);
+}
+
+.open-source-stat strong,
+.open-source-stat span {
+    display: block;
+}
+
+.open-source-stat strong {
+    color: #181612;
+    font-size: clamp(1.65rem, 3vw, 2.45rem);
+    font-weight: 400;
+    line-height: 0.95;
+}
+
+.open-source-stat span {
+    margin-top: 0.35rem;
+    color: #4b4539;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.open-source-board {
+    display: grid;
+    gap: 0.86rem;
+}
+
+.open-source-pr,
+.open-source-empty {
+    min-height: auto;
+    align-items: stretch;
+    padding: 0;
+}
+
+.open-source-written {
+    width: 100%;
+}
+
+.open-source-pr .open-source-written,
+.open-source-empty .open-source-written {
+    position: relative;
+    display: grid;
+    gap: 0.6rem;
+    padding: 0.92rem 0.98rem 0.98rem;
+    border: 2px solid rgba(35, 31, 25, 0.16);
+    border-radius: 8px;
+    background:
+        linear-gradient(90deg, color-mix(in srgb, var(--accent), transparent 82%) 0 3px, transparent 3px),
+        rgba(229, 220, 199, 0.7);
+    box-shadow:
+        0 10px 24px rgba(43, 32, 18, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.36);
+    transform-origin: 8% 50%;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.open-source-pr:nth-child(even) .open-source-written {
+    transform: rotate(0.35deg);
+}
+
+.open-source-pr:nth-child(odd) .open-source-written {
+    transform: rotate(-0.25deg);
+}
+
+.open-source-pr:hover .open-source-written,
+.open-source-pr:focus-within .open-source-written {
+    border-color: color-mix(in srgb, var(--accent), #1b1712 18%);
+    background:
+        linear-gradient(90deg, color-mix(in srgb, var(--accent), transparent 68%) 0 3px, transparent 3px),
+        rgba(239, 231, 210, 0.82);
+    box-shadow:
+        0 18px 34px color-mix(in srgb, var(--accent), transparent 82%),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    transform: translateY(-3px) rotate(0deg);
+}
+
+.open-source-pr-meta,
+.open-source-pr-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.44rem;
+    color: #625b4e;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    line-height: 1.25;
+    text-transform: uppercase;
+}
+
+.open-source-repo {
+    color: var(--accent);
+}
+
+.open-source-number,
+.open-source-date,
+.open-source-pr-foot span:not(.open-source-status) {
+    color: #625b4e;
+}
+
+.open-source-pr h3 {
+    margin: 0;
+    color: #201d19;
+    font-size: clamp(1.22rem, 2vw, 1.72rem);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+}
+
+.open-source-pr h3 a {
+    position: relative;
+    text-decoration: none;
+}
+
+.open-source-pr h3 a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.06em;
+    height: 0.08em;
+    background: var(--accent);
+    opacity: 0.42;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+}
+
+.open-source-pr:hover h3 a::after,
+.open-source-pr:focus-within h3 a::after {
+    transform: scaleX(1);
+}
+
+.open-source-status {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.34rem;
+    min-height: 1.6rem;
+    padding: 0.23rem 0.52rem;
+    border: 1px solid color-mix(in srgb, var(--accent), transparent 48%);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent), #f7efdf 84%);
+    color: #1f1c18;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.open-source-status::before {
+    content: "";
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+.status-open .open-source-status {
+    animation: review-pulse 1.9s ease-in-out infinite;
+}
+
+.status-closed .open-source-status {
+    background: rgba(219, 209, 189, 0.82);
+}
+
+.status-closed .open-source-status::before {
+    background: #7d7568;
+}
+
+.status-merged .open-source-status::before {
+    clip-path: polygon(14% 48%, 35% 68%, 82% 18%, 92% 28%, 36% 86%, 5% 56%);
+    border-radius: 0;
+}
+
+.open-source-empty p {
+    max-width: 56rem;
+    margin: 0;
+}
+
+@keyframes review-pulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 color-mix(in srgb, var(--accent), transparent 100%);
+    }
+    50% {
+        box-shadow: 0 0 18px color-mix(in srgb, var(--accent), transparent 62%);
+    }
 }
 
 .slate-sticker {
@@ -706,7 +940,8 @@ h6 {
     }
 
     .slate-copy,
-    .project-ledger {
+    .project-ledger,
+    .open-source-ledger {
         gap: 1.2rem;
     }
 
@@ -719,6 +954,25 @@ h6 {
         font-size: clamp(1.5rem, 6vw, 2rem);
         line-height: 1.1;
         margin-bottom: 0.5rem;
+    }
+
+    .open-source-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .open-source-pr .open-source-written,
+    .open-source-empty .open-source-written {
+        padding: 0.9rem;
+    }
+
+    .open-source-pr h3 {
+        font-size: clamp(1.15rem, 5vw, 1.55rem);
+    }
+
+    .open-source-pr-meta,
+    .open-source-pr-foot {
+        font-size: 0.66rem;
+        letter-spacing: 0.08em;
     }
 
     .slate-actions {
@@ -777,9 +1031,18 @@ h6 {
 
     .slate-kicker,
     .slate-line-copy,
-    .project-written {
+    .project-written,
+    .open-source-written {
         font-size: 0.95rem;
         line-height: 1.8;
+    }
+
+    .open-source-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .open-source-stat {
+        padding: 0.75rem;
     }
 }
 
@@ -799,6 +1062,15 @@ h6 {
 
     .slate-line {
         --write: 1 !important;
+    }
+
+    .open-source-stat {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .status-open .open-source-status {
+        animation: none !important;
     }
 }
 
