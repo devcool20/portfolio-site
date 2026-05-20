@@ -5,7 +5,7 @@ import Link from "next/link";
 import BlueprintHero from "@/components/hero/BlueprintHero";
 import LinkPreview from "@/components/ui/LinkPreview";
 import type { GitHubContributionData, GitHubPullRequest } from "@/lib/github";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -229,8 +229,42 @@ function statusLabel(pr: GitHubPullRequest) {
   return "Open";
 }
 
+function getRepoName(repo: string) {
+  const [, name = repo] = repo.split("/");
+  return name;
+}
+
+function groupPullRequests(prs: GitHubPullRequest[]) {
+  const groups = new Map<string, GitHubPullRequest[]>();
+
+  for (const pr of prs) {
+    const key = pr.repo;
+    const existing = groups.get(key);
+    if (existing) {
+      existing.push(pr);
+    } else {
+      groups.set(key, [pr]);
+    }
+  }
+
+  return Array.from(groups.entries()).map(([repo, items]) => ({
+    repo,
+    repoName: getRepoName(repo),
+    items: [...items].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    ),
+  }));
+}
+
+const defaultVisiblePullRequests = 1;
+
+function formatPrCount(count: number) {
+  return `${count} ${count === 1 ? "PR" : "PRs"}`;
+}
+
 function OpenSourceLedger({ contributions }: { contributions: GitHubContributionData }) {
-  const visiblePrs = contributions.prs.slice(0, 8);
+  const [expandedRepos, setExpandedRepos] = useState<Set<string>>(() => new Set());
+  const groupedPrs = groupPullRequests(contributions.prs);
   const stats = [
     { label: "Public PRs", value: contributions.summary.total },
     { label: "Merged", value: contributions.summary.merged },
@@ -238,7 +272,19 @@ function OpenSourceLedger({ contributions }: { contributions: GitHubContribution
     { label: "Repos", value: contributions.summary.uniqueRepos },
   ];
 
-  if (visiblePrs.length === 0) {
+  const toggleRepo = (repo: string) => {
+    setExpandedRepos((current) => {
+      const next = new Set(current);
+      if (next.has(repo)) {
+        next.delete(repo);
+      } else {
+        next.add(repo);
+      }
+      return next;
+    });
+  };
+
+  if (contributions.prs.length === 0) {
     return (
       <div className="open-source-empty slate-line" style={{ "--write": 0 } as CSSProperties}>
         <div className="open-source-written">
@@ -266,33 +312,63 @@ function OpenSourceLedger({ contributions }: { contributions: GitHubContribution
       </div>
 
       <div className="open-source-board" aria-label="Recent public pull requests">
-        {visiblePrs.map((pr) => (
-          <article
-            className={`open-source-pr slate-line status-${pr.status}`}
-            key={pr.url}
-            style={{ "--write": 0 } as CSSProperties}
-          >
-            <div className="open-source-written">
-              <div className="open-source-pr-meta">
-                <span className="open-source-repo">{pr.repo}</span>
-                <span className="open-source-number">#{pr.number}</span>
-                <span className="open-source-date">{formatDate(pr.createdAt)}</span>
-              </div>
+        {groupedPrs.map((group) => {
+          const isExpanded = expandedRepos.has(group.repo);
+          const visibleCount = isExpanded ? group.items.length : defaultVisiblePullRequests;
+          const visibleItems = group.items.slice(0, visibleCount);
+          const hiddenCount = group.items.length - visibleItems.length;
 
-              <h3>
-                <Link href={pr.url} target="_blank" rel="noreferrer">
-                  {pr.title}
-                </Link>
-              </h3>
+          return (
+            <section className="open-source-group" key={group.repo}>
+              <div className="open-source-group-shell">
+                <div className="open-source-group-head">
+                  <div>
+                    <p className="open-source-group-label">Repository</p>
+                    <h3>{group.repoName}</h3>
+                  </div>
+                  <span className="open-source-group-count">{formatPrCount(group.items.length)}</span>
+                </div>
 
-              <div className="open-source-pr-foot">
-                <span className="open-source-status">{statusLabel(pr)}</span>
-                <span>{pr.comments} review notes</span>
-                <span>{pr.authorAssociation.toLowerCase()}</span>
+                <div className="open-source-group-list">
+                  {visibleItems.map((pr) => (
+                    <article className={`open-source-pr status-${pr.status}`} key={pr.url}>
+                      <div className="open-source-written">
+                        <div className="open-source-pr-meta">
+                          <span className="open-source-repo">{pr.repo}</span>
+                          <span className="open-source-number">#{pr.number}</span>
+                          <span className="open-source-date">{formatDate(pr.createdAt)}</span>
+                        </div>
+
+                        <h4>
+                          <Link href={pr.url} target="_blank" rel="noreferrer">
+                            {pr.title}
+                          </Link>
+                        </h4>
+
+                        <div className="open-source-pr-foot">
+                          <span className="open-source-status">{statusLabel(pr)}</span>
+                          <span>{pr.comments} review notes</span>
+                          <span>{pr.authorAssociation.toLowerCase()}</span>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+
+                {group.items.length > defaultVisiblePullRequests ? (
+                  <button
+                    type="button"
+                    className="open-source-more"
+                    aria-expanded={isExpanded}
+                    onClick={() => toggleRepo(group.repo)}
+                  >
+                    {isExpanded ? "Show less" : `+${hiddenCount} more`}
+                  </button>
+                ) : null}
               </div>
-            </div>
-          </article>
-        ))}
+            </section>
+          );
+        })}
       </div>
     </div>
   );
@@ -422,6 +498,25 @@ function SlateAnimations() {
             scrollTrigger: {
               trigger: stat,
               start: "top 88%",
+              once: true,
+            },
+          },
+        );
+      });
+
+      gsap.utils.toArray<HTMLElement>(".open-source-group-shell").forEach((group, index) => {
+        gsap.fromTo(
+          group,
+          { opacity: 0, y: 20, rotate: index % 2 === 0 ? -1 : 1 },
+          {
+            opacity: 1,
+            y: 0,
+            rotate: 0,
+            duration: 0.48,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: group,
+              start: "top 86%",
               once: true,
             },
           },

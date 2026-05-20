@@ -388,8 +388,7 @@ h6 {
 }
 
 .slate-line-copy,
-.project-written,
-.open-source-written {
+.project-written {
     display: block;
     max-width: 74rem;
     clip-path: inset(0 calc((1 - var(--write)) * 100%) 0 0);
@@ -614,6 +613,72 @@ h6 {
     gap: 0.86rem;
 }
 
+.open-source-group {
+    min-height: auto;
+    align-items: stretch;
+    padding: 0;
+}
+
+.open-source-group-shell {
+    display: grid;
+    gap: 0.9rem;
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid color-mix(in srgb, var(--accent), transparent 56%);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 22%),
+        rgba(226, 218, 197, 0.72);
+    box-shadow:
+        0 14px 30px rgba(43, 32, 18, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.38);
+}
+
+.open-source-group-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.8rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px dashed color-mix(in srgb, var(--accent), transparent 68%);
+}
+
+.open-source-group-label {
+    margin: 0 0 0.24rem;
+    color: #625b4e;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.open-source-group-head h3 {
+    margin: 0;
+    color: #1d1a16;
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    line-height: 1;
+    text-transform: lowercase;
+}
+
+.open-source-group-count {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.38rem 0.65rem;
+    border: 1px solid color-mix(in srgb, var(--accent), transparent 48%);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent), #f7efdf 86%);
+    color: #2a251f;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.open-source-group-list {
+    display: grid;
+    gap: 0.75rem;
+}
+
 .open-source-pr,
 .open-source-empty {
     min-height: auto;
@@ -623,6 +688,12 @@ h6 {
 
 .open-source-written {
     width: 100%;
+    color: #282522;
+    font-family: var(--font-technical);
+    font-size: clamp(0.95rem, 1.25vw, 1.08rem);
+    font-weight: 400;
+    line-height: 1.55;
+    text-wrap: balance;
 }
 
 .open-source-pr .open-source-written,
@@ -645,6 +716,7 @@ h6 {
         box-shadow 0.2s ease,
         transform 0.2s ease,
         background 0.2s ease;
+    clip-path: none;
 }
 
 .open-source-pr:nth-child(even) .open-source-written {
@@ -665,6 +737,32 @@ h6 {
         0 18px 34px color-mix(in srgb, var(--accent), transparent 82%),
         inset 0 0 0 1px rgba(255, 255, 255, 0.5);
     transform: translateY(-3px) rotate(0deg);
+}
+
+.open-source-more {
+    justify-self: start;
+    min-height: 2.25rem;
+    border: 2px solid color-mix(in srgb, var(--accent), #15110d 22%);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--accent), #fff8e8 84%);
+    color: #1d1916;
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    padding: 0.48rem 0.72rem;
+    text-transform: uppercase;
+    transition:
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.open-source-more:hover,
+.open-source-more:focus-visible {
+    background: color-mix(in srgb, var(--accent), #fff8e8 70%);
+    box-shadow: 0 10px 18px color-mix(in srgb, var(--accent), transparent 80%);
+    outline: none;
+    transform: translateY(-2px) rotate(-0.35deg);
 }
 
 .open-source-pr-meta,
@@ -700,12 +798,24 @@ h6 {
     overflow-wrap: anywhere;
 }
 
-.open-source-pr h3 a {
+.open-source-pr h3 a,
+.open-source-pr h4 a {
     position: relative;
     text-decoration: none;
 }
 
-.open-source-pr h3 a::after {
+.open-source-pr h4 {
+    margin: 0;
+    color: #201d19;
+    font-size: clamp(1.08rem, 1.7vw, 1.4rem);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+.open-source-pr h3 a::after,
+.open-source-pr h4 a::after {
     content: "";
     position: absolute;
     left: 0;
@@ -720,7 +830,9 @@ h6 {
 }
 
 .open-source-pr:hover h3 a::after,
-.open-source-pr:focus-within h3 a::after {
+.open-source-pr:focus-within h3 a::after,
+.open-source-pr:hover h4 a::after,
+.open-source-pr:focus-within h4 a::after {
     transform: scaleX(1);
 }
 
@@ -965,8 +1077,16 @@ h6 {
         padding: 0.9rem;
     }
 
+    .open-source-group-shell {
+        padding: 0.9rem;
+    }
+
     .open-source-pr h3 {
         font-size: clamp(1.15rem, 5vw, 1.55rem);
+    }
+
+    .open-source-pr h4 {
+        font-size: 1.05rem;
     }
 
     .open-source-pr-meta,
@@ -1031,8 +1151,7 @@ h6 {
 
     .slate-kicker,
     .slate-line-copy,
-    .project-written,
-    .open-source-written {
+    .project-written {
         font-size: 0.95rem;
         line-height: 1.8;
     }
@@ -1043,6 +1162,16 @@ h6 {
 
     .open-source-stat {
         padding: 0.75rem;
+    }
+
+    .open-source-group-head {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .open-source-group-count {
+        justify-self: start;
+        width: fit-content;
     }
 }
 
@@ -1065,6 +1194,11 @@ h6 {
     }
 
     .open-source-stat {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .open-source-group-shell {
         opacity: 1 !important;
         transform: none !important;
     }
