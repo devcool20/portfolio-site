@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { tabs } from "@/lib/data";
+import FlagLogo from "@/components/ui/FlagLogo";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,32 +16,18 @@ export default function BlogLayout({
 }) {
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>(".slate-line").forEach((line) => {
-        gsap.fromTo(line, { "--write": 0 }, {
-          "--write": 1,
-          duration: 0.75,
-          ease: "power1.out",
-          scrollTrigger: {
-            trigger: line,
-            start: "top 86%",
-            once: true,
-          },
-        });
-      });
-
-      gsap.utils.toArray<HTMLElement>(".slate-gif-frame").forEach((gif) => {
+      gsap.utils.toArray<HTMLElement>(".blog-note-card").forEach((card) => {
         gsap.fromTo(
-          gif,
-          { opacity: 0, y: 28, rotate: -5, scale: 0.92 },
+          card,
+          { opacity: 0, y: 24 },
           {
             opacity: 1,
             y: 0,
-            rotate: -1,
-            scale: 1,
+            duration: 0.5,
             ease: "power2.out",
             scrollTrigger: {
-              trigger: gif,
-              start: "top 86%",
+              trigger: card,
+              start: "top 90%",
               once: true,
             },
           },
@@ -52,10 +39,11 @@ export default function BlogLayout({
   }, []);
 
   return (
-    <div className="slate-track blog-slate min-h-screen">
-      <div className="slate-top-note">
-        <Link href="/" className="blog-home-link">
-          Clean Slate
+    <div className="blog-slate min-h-screen">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 max-w-7xl mx-auto border-b border-[#111111]/10 pb-6 mb-8">
+        <Link href="/" className="blog-home-link flex items-center gap-2 group decoration-transparent">
+          <span>Divyanshu Sharma</span>
+          <FlagLogo size={16} className="text-[#111111] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" />
         </Link>
         <nav className="blog-slate-nav" aria-label="Site sections">
           {tabs.map((tab) => (
@@ -74,3 +62,4 @@ export default function BlogLayout({
     </div>
   );
 }
+

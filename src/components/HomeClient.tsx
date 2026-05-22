@@ -1,12 +1,12 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import BlueprintHero from "@/components/hero/BlueprintHero";
+import BrandHero from "@/components/hero/BrandHero";
 import LinkPreview from "@/components/ui/LinkPreview";
+import FlagLogo from "@/components/ui/FlagLogo";
+import PillButton from "@/components/ui/PillButton";
 import type { GitHubContributionData, GitHubPullRequest } from "@/lib/github";
 import { useEffect, useRef, useState } from "react";
-import type { CSSProperties } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -29,8 +29,6 @@ type SlateSectionData = {
   id: string;
   number: string;
   label: string;
-  accent: string;
-  gif: string;
   title: string;
   kicker: string;
   lines?: string[];
@@ -44,8 +42,6 @@ const slateSections: SlateSectionData[] = [
     id: "about",
     number: "01",
     label: "About",
-    accent: "coral",
-    gif: "/gif/f1.gif",
     title: "Divyanshu Sharma",
     kicker: "Full-stack product builder, F1 obsessive, and maker of useful interfaces.",
     lines: [
@@ -64,8 +60,6 @@ const slateSections: SlateSectionData[] = [
     id: "skills",
     number: "02",
     label: "Skills",
-    accent: "mint",
-    gif: "/gif/f1(2).gif",
     title: "Things I Reach For",
     kicker: "A compact toolbox for shipping products that feel alive.",
     lines: [
@@ -83,10 +77,8 @@ const slateSections: SlateSectionData[] = [
     id: "projects",
     number: "03",
     label: "Projects",
-    accent: "sky",
-    gif: "/gif/f1(3).gif",
-    title: "Projects Written On The Slate",
-    kicker: "Scroll pace controls the writing. Once a card is fully written, choose where to go.",
+    title: "Selected Projects",
+    kicker: "A collection of web applications, protocols, and developer tools.",
     projects: [
       {
         title: "projF1",
@@ -124,8 +116,6 @@ const slateSections: SlateSectionData[] = [
     id: "open-source",
     number: "04",
     label: "Open Source",
-    accent: "lime",
-    gif: "/gif/f1(4).gif",
     title: "PR Pit Wall",
     kicker: "Live public pull requests from GitHub, cached hourly and arranged like a review board.",
     openSource: true,
@@ -141,8 +131,6 @@ const slateSections: SlateSectionData[] = [
     id: "experience",
     number: "05",
     label: "Experience",
-    accent: "violet",
-    gif: "/gif/f1(4).gif",
     title: "Work Timeline",
     kicker: "Two chapters, both product-heavy, both built under real constraints.",
     lines: [
@@ -155,64 +143,10 @@ const slateSections: SlateSectionData[] = [
       { label: "Visit Zingvel", href: "http://www.zingvel.com/" },
     ],
   },
-  {
-    id: "contact",
-    number: "06",
-    label: "Contact",
-    accent: "gold",
-    gif: "/gif/f1(5).gif",
-    title: "Leave A Note",
-    kicker: "Open for product engineering roles, founding teams, and ambitious builds.",
-    lines: [
-      "Best place to reach me: sharmadivyanshu265@gmail.com",
-      "I am happiest around teams that care about taste, systems, shipping, and the details users actually feel.",
-    ],
-    actions: [
-      { label: "Send Email", href: "mailto:sharmadivyanshu265@gmail.com" },
-      { label: "Read Blog", href: "/blog" },
-    ],
-  },
 ];
 
 const githubSearchUrl =
   "https://github.com/search?q=is%3Apr+author%3Adevcool20+is%3Apublic&type=pullrequests";
-
-function SlateActionButton({ action }: { action: SlateAction }) {
-  const className = "slate-choice";
-
-  if (action.target) {
-    const target = action.target;
-
-    return (
-      <button
-        type="button"
-        className={className}
-        onClick={() => document.getElementById(target)?.scrollIntoView({ behavior: "smooth" })}
-      >
-        {action.label}
-      </button>
-    );
-  }
-
-  return (
-    <Link
-      className={className}
-      href={action.href ?? "#"}
-      target={action.href?.startsWith("http") ? "_blank" : undefined}
-      rel={action.href?.startsWith("http") ? "noreferrer" : undefined}
-    >
-      {action.label}
-    </Link>
-  );
-}
-
-function WrittenLine({ children }: { children: string }) {
-  return (
-    <div className="slate-line" style={{ "--write": 0 } as CSSProperties}>
-      <span className="slate-line-copy">{children}</span>
-    </div>
-  );
-}
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -265,11 +199,12 @@ function formatPrCount(count: number) {
 function OpenSourceLedger({ contributions }: { contributions: GitHubContributionData }) {
   const [expandedRepos, setExpandedRepos] = useState<Set<string>>(() => new Set());
   const groupedPrs = groupPullRequests(contributions.prs);
+  
   const stats = [
-    { label: "Public PRs", value: contributions.summary.total },
-    { label: "Merged", value: contributions.summary.merged },
-    { label: "Open", value: contributions.summary.open },
-    { label: "Repos", value: contributions.summary.uniqueRepos },
+    { label: "Public PRs", value: contributions.summary.total, color: "var(--card-peach)" },
+    { label: "Merged", value: contributions.summary.merged, color: "var(--card-yellow)" },
+    { label: "Open", value: contributions.summary.open, color: "var(--card-lavender)" },
+    { label: "Repos", value: contributions.summary.uniqueRepos, color: "var(--card-mint)" },
   ];
 
   const toggleRepo = (repo: string) => {
@@ -284,280 +219,138 @@ function OpenSourceLedger({ contributions }: { contributions: GitHubContribution
     });
   };
 
+  const renderRepoCard = (group: typeof groupedPrs[0]) => {
+    const isExpanded = expandedRepos.has(group.repo);
+    const visibleCount = isExpanded ? group.items.length : defaultVisiblePullRequests;
+    const visibleItems = group.items.slice(0, visibleCount);
+    const hiddenCount = group.items.length - visibleItems.length;
+
+    return (
+      <div
+        className="bg-white border-2 border-[#111111] rounded-[20px] p-4 sm:p-5 flex flex-col gap-3 shadow-[4px_4px_0_0_rgba(17,17,17,1)] w-full"
+        key={group.repo}
+      >
+        <div className="flex items-start justify-between gap-4 border-b border-[#111111]/10 pb-3">
+          <div>
+            <span className="font-body text-[9px] font-bold uppercase tracking-wider text-[#111111]/50">Repository</span>
+            <h4 className="font-display text-lg sm:text-xl text-[#111111] lowercase leading-none mt-1">
+              {group.repoName}
+            </h4>
+          </div>
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full border border-[#111111] bg-[#B1FC54]/20 font-body text-[9px] font-extrabold uppercase tracking-wider text-[#111111] select-none">
+            {formatPrCount(group.items.length)}
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {visibleItems.map((pr) => {
+            const statusColors = {
+              merged: "bg-[#B1FC54] text-[#111111]",
+              closed: "bg-[#FFEAE1] text-[#111111]",
+              open: "bg-[#FFF5A9] text-[#111111]",
+            };
+
+            return (
+              <div
+                key={pr.url}
+                className="border border-[#111111]/10 rounded-xl p-3 bg-gray-50/50 hover:bg-[#B1FC54]/5 transition-colors duration-200"
+              >
+                <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-[#111111]/40 mb-1.5">
+                  <span className="text-[#111111]/50">{pr.repo}</span>
+                  <span>•</span>
+                  <span>#{pr.number}</span>
+                  <span>•</span>
+                  <span>{formatDate(pr.createdAt)}</span>
+                </div>
+
+                <h5 className="font-body text-xs font-extrabold text-[#111111] hover:text-[#B1FC54] transition-colors leading-snug mb-2">
+                  <Link href={pr.url} target="_blank" rel="noreferrer">
+                    {pr.title}
+                  </Link>
+                </h5>
+
+                <div className="flex items-center gap-2.5 text-[9px] font-bold uppercase tracking-wider text-[#111111]/50">
+                  <span className={`inline-flex px-1.5 py-0.5 rounded border border-[#111111] font-extrabold ${statusColors[pr.status as "merged" | "closed" | "open"] || "bg-white"}`}>
+                    {statusLabel(pr)}
+                  </span>
+                  <span>{pr.comments} comments</span>
+                  <span>{pr.authorAssociation.toLowerCase()}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {group.items.length > defaultVisiblePullRequests ? (
+          <button
+            type="button"
+            className="self-start text-[9px] font-bold uppercase tracking-wider text-[#111111] hover:text-[#B1FC54] transition-colors mt-1"
+            aria-expanded={isExpanded}
+            onClick={() => toggleRepo(group.repo)}
+          >
+            {isExpanded ? "Show less" : `+${hiddenCount} more PRs`}
+          </button>
+        ) : null}
+      </div>
+    );
+  };
+
   if (contributions.prs.length === 0) {
     return (
-      <div className="open-source-empty slate-line" style={{ "--write": 0 } as CSSProperties}>
-        <div className="open-source-written">
-          <p>
-            GitHub contribution telemetry is taking a pit stop. The live board will retry on the
-            next cached request.
-          </p>
-          <Link href={githubSearchUrl} target="_blank" rel="noreferrer" className="project-open">
-            Open GitHub PRs
-          </Link>
-        </div>
+      <div className="bg-white border-2 border-[#111111] rounded-[20px] p-6 shadow-[4px_4px_0_0_rgba(17,17,17,1)] gsap-reveal">
+        <p className="font-body text-base text-[#111111]/80 mb-4">
+          GitHub contribution telemetry is taking a pit stop. The live board will retry on the next cached request.
+        </p>
+        <PillButton href={githubSearchUrl} variant="outline">
+          Open GitHub PRs
+        </PillButton>
       </div>
     );
   }
 
   return (
-    <div className="open-source-ledger">
-      <div className="open-source-stats" aria-label="Open source contribution stats">
+    <div className="flex flex-col gap-6 w-full">
+      {/* Telemetry Stats Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 gsap-reveal">
         {stats.map((stat) => (
-          <div className="open-source-stat" key={stat.label}>
-            <strong>{stat.value}</strong>
-            <span>{stat.label}</span>
+          <div
+            className="border-2 border-[#111111] rounded-2xl p-3 sm:p-4 flex flex-col justify-between min-h-[85px] shadow-[3px_3px_0_0_rgba(17,17,17,1)]"
+            style={{ backgroundColor: stat.color }}
+            key={stat.label}
+          >
+            <strong className="font-display text-2xl sm:text-3xl leading-none text-[#111111]">
+              {stat.value}
+            </strong>
+            <span className="font-body text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-[#111111]/60 mt-2">
+              {stat.label}
+            </span>
           </div>
         ))}
       </div>
 
-      <div className="open-source-board" aria-label="Recent public pull requests">
-        {groupedPrs.map((group) => {
-          const isExpanded = expandedRepos.has(group.repo);
-          const visibleCount = isExpanded ? group.items.length : defaultVisiblePullRequests;
-          const visibleItems = group.items.slice(0, visibleCount);
-          const hiddenCount = group.items.length - visibleItems.length;
+      {/* PR Cards Bulletin Board */}
+      <div className="w-full gsap-reveal">
+        {/* Desktop Layout: 2 Independent Columns */}
+        <div className="hidden md:grid grid-cols-2 gap-4 w-full items-start">
+          <div className="flex flex-col gap-4 w-full">
+            {groupedPrs
+              .filter((_, idx) => idx % 2 === 0)
+              .map((group) => renderRepoCard(group))}
+          </div>
+          <div className="flex flex-col gap-4 w-full">
+            {groupedPrs
+              .filter((_, idx) => idx % 2 === 1)
+              .map((group) => renderRepoCard(group))}
+          </div>
+        </div>
 
-          return (
-            <section className="open-source-group" key={group.repo}>
-              <div className="open-source-group-shell">
-                <div className="open-source-group-head">
-                  <div>
-                    <p className="open-source-group-label">Repository</p>
-                    <h3>{group.repoName}</h3>
-                  </div>
-                  <span className="open-source-group-count">{formatPrCount(group.items.length)}</span>
-                </div>
-
-                <div className="open-source-group-list">
-                  {visibleItems.map((pr) => (
-                    <article className={`open-source-pr status-${pr.status}`} key={pr.url}>
-                      <div className="open-source-written">
-                        <div className="open-source-pr-meta">
-                          <span className="open-source-repo">{pr.repo}</span>
-                          <span className="open-source-number">#{pr.number}</span>
-                          <span className="open-source-date">{formatDate(pr.createdAt)}</span>
-                        </div>
-
-                        <h4>
-                          <Link href={pr.url} target="_blank" rel="noreferrer">
-                            {pr.title}
-                          </Link>
-                        </h4>
-
-                        <div className="open-source-pr-foot">
-                          <span className="open-source-status">{statusLabel(pr)}</span>
-                          <span>{pr.comments} review notes</span>
-                          <span>{pr.authorAssociation.toLowerCase()}</span>
-                        </div>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-
-                {group.items.length > defaultVisiblePullRequests ? (
-                  <button
-                    type="button"
-                    className="open-source-more"
-                    aria-expanded={isExpanded}
-                    onClick={() => toggleRepo(group.repo)}
-                  >
-                    {isExpanded ? "Show less" : `+${hiddenCount} more`}
-                  </button>
-                ) : null}
-              </div>
-            </section>
-          );
-        })}
+        {/* Mobile Layout: 1 Column (Flat Sequential) */}
+        <div className="flex md:hidden flex-col gap-4 w-full">
+          {groupedPrs.map((group) => renderRepoCard(group))}
+        </div>
       </div>
     </div>
   );
-}
-
-function SlateSection({
-  section,
-  contributions,
-}: {
-  section: SlateSectionData;
-  contributions: GitHubContributionData;
-}) {
-  return (
-    <section id={section.id} className={`slate-section accent-${section.accent}`}>
-      <div className="slate-sticker slate-sticker-one" aria-hidden="true" />
-      <div className="slate-sticker slate-sticker-two" aria-hidden="true" />
-
-      <div className="slate-heading">
-        <span>{section.number}</span>
-        <p>{section.label}</p>
-        <div className="slate-gif-frame">
-          <img src={section.gif} alt="" loading="lazy" />
-        </div>
-      </div>
-
-      <div className="slate-page">
-        <div className="slate-rule" aria-hidden="true" />
-        <p className="slate-kicker">{section.kicker}</p>
-        <h2 className="slate-title">{section.title}</h2>
-
-        {section.projects ? (
-          <div className="project-ledger">
-            {section.projects.map((project) => (
-              <article
-                key={project.title}
-                className="project-entry slate-line"
-                style={{ "--write": 0 } as CSSProperties}
-              >
-                <div className="project-written">
-                  <h3>
-                    <LinkPreview
-                      className="project-title-link"
-                      imageSrc={project.previewImage}
-                      title={project.title}
-                      url={project.href}
-                    >
-                      {project.title}
-                    </LinkPreview>
-                  </h3>
-                  <p>{project.note}</p>
-                  <Link href={project.href} target="_blank" rel="noreferrer" className="project-open">
-                    Open project
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : section.openSource ? (
-          <OpenSourceLedger contributions={contributions} />
-        ) : (
-          <div className="slate-copy">
-            {section.lines?.map((line) => (
-              <WrittenLine key={line}>{line}</WrittenLine>
-            ))}
-          </div>
-        )}
-
-        {section.actions ? (
-          <div className="slate-actions">
-            {section.actions.map((action) => (
-              <SlateActionButton key={action.label} action={action} />
-            ))}
-          </div>
-        ) : null}
-      </div>
-    </section>
-  );
-}
-
-function SlateAnimations() {
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>(".slate-section").forEach((section) => {
-        gsap.fromTo(
-          section,
-          { opacity: 0.82 },
-          {
-            opacity: 1,
-            scrollTrigger: {
-              trigger: section,
-              start: "top bottom",
-              end: "top 35%",
-              scrub: true,
-            },
-          },
-        );
-      });
-
-      gsap.utils.toArray<HTMLElement>(".slate-line").forEach((line) => {
-        gsap.fromTo(
-          line,
-          { "--write": 0 },
-          {
-            "--write": 1,
-            duration: 0.85,
-            ease: "power1.out",
-            scrollTrigger: {
-              trigger: line,
-              start: "top 84%",
-              once: true,
-              onEnter: () => line.classList.add("is-written"),
-            },
-          },
-        );
-      });
-
-      gsap.utils.toArray<HTMLElement>(".open-source-stat").forEach((stat, index) => {
-        gsap.fromTo(
-          stat,
-          { opacity: 0, y: 18, rotate: index % 2 === 0 ? -1.5 : 1.5 },
-          {
-            opacity: 1,
-            y: 0,
-            rotate: 0,
-            duration: 0.42,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: stat,
-              start: "top 88%",
-              once: true,
-            },
-          },
-        );
-      });
-
-      gsap.utils.toArray<HTMLElement>(".open-source-group-shell").forEach((group, index) => {
-        gsap.fromTo(
-          group,
-          { opacity: 0, y: 20, rotate: index % 2 === 0 ? -1 : 1 },
-          {
-            opacity: 1,
-            y: 0,
-            rotate: 0,
-            duration: 0.48,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: group,
-              start: "top 86%",
-              once: true,
-            },
-          },
-        );
-      });
-
-      gsap.utils.toArray<HTMLElement>(".slate-gif-frame").forEach((gif) => {
-        gsap.fromTo(
-          gif,
-          { opacity: 0, y: 34, rotate: -4, scale: 0.9 },
-          {
-            opacity: 1,
-            y: 0,
-            rotate: -1,
-            scale: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: gif.closest(".slate-section"),
-              start: "top 72%",
-              once: true,
-            },
-          },
-        );
-      });
-
-      gsap.to(".slate-track", {
-        backgroundPosition: "0 220px, 0 140px, center top",
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".slate-track",
-          start: "top bottom",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-    });
-
-    return () => ctx.revert();
-  }, []);
-
-  return null;
 }
 
 export default function HomeClient({ contributions }: { contributions: GitHubContributionData }) {
@@ -567,27 +360,417 @@ export default function HomeClient({ contributions }: { contributions: GitHubCon
     setTimeout(() => {
       const el = document.getElementById(section);
       if (!el) return;
-      window.scrollTo({
-        top: el.getBoundingClientRect().top + window.scrollY - 18,
-        behavior: "smooth",
-      });
+      const lenis = (window as unknown as { lenis: { scrollTo: (target: HTMLElement, options?: { offset?: number }) => void } | null }).lenis;
+      if (lenis) {
+        lenis.scrollTo(el, { offset: -24 });
+      } else {
+        window.scrollTo({
+          top: el.getBoundingClientRect().top + window.scrollY - 24,
+          behavior: "smooth",
+        });
+      }
     }, 100);
   };
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // General section reveal animations
+      gsap.utils.toArray<HTMLElement>(".gsap-reveal").forEach((element) => {
+        gsap.fromTo(
+          element,
+          { opacity: 0, y: 36 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: element,
+              start: "top 88%",
+              once: true,
+            },
+          },
+        );
+      });
+
+      // Special cards reveal animations (staggered)
+      gsap.utils.toArray<HTMLElement>(".gsap-reveal-cards").forEach((container) => {
+        const cards = container.querySelectorAll(".gsap-card");
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.1,
+            duration: 0.7,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: container,
+              start: "top 86%",
+              once: true,
+            },
+          },
+        );
+      });
+
+      // Parallax effect on the large footer banner text
+      gsap.fromTo(
+        ".footer-banner-text",
+        { xPercent: 12 },
+        {
+          xPercent: -6,
+          scrollTrigger: {
+            trigger: "#contact",
+            start: "top bottom",
+            end: "bottom bottom",
+            scrub: 0.6,
+          },
+        },
+      );
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div ref={rootRef} className="relative min-h-screen bg-[#060608]">
-      <BlueprintHero onNavigate={handleNavigate} />
-      <SlateAnimations />
+    <div ref={rootRef} className="relative min-h-screen bg-[#F7F8F4]">
+      {/* Mockup 4 Hero Section */}
+      <BrandHero onNavigate={handleNavigate} />
 
-      <main className="slate-track" aria-label="Portfolio slate">
-        <div className="slate-top-note">
-          <span>Clean Slate</span>
-          <p>Scroll to write. Pause to choose.</p>
-        </div>
+      <main className="w-full bg-[#F7F8F4] overflow-hidden" aria-label="Portfolio content">
+        
+        {/* 01 / ABOUT SECTION */}
+        <section id="about" className="portfolio-section border-t border-[#111111]/10" style={{ backgroundColor: "var(--card-mint)" }}>
+          <div className="portfolio-container grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            {/* Sticky Label */}
+            <div className="lg:col-span-3 flex lg:flex-col items-baseline lg:items-start gap-3 lg:sticky lg:top-24 select-none">
+              <span className="font-display text-3xl sm:text-4xl lg:text-5xl text-[#111111]/25 leading-none">01</span>
+              <h2 className="font-display text-lg sm:text-xl lg:text-2xl text-[#111111] leading-none uppercase tracking-wider">About</h2>
+            </div>
+            
+            {/* Content Area */}
+            <div className="lg:col-span-9 flex flex-col gap-6">
+              <p className="font-display text-xl sm:text-2xl lg:text-3xl text-[#111111] leading-snug uppercase tracking-tight max-w-4xl gsap-reveal">
+                {slateSections[0].kicker}
+              </p>
+              
+              <div className="font-body text-sm sm:text-base text-[#111111]/75 max-w-2xl space-y-4 mt-2 gsap-reveal">
+                {slateSections[0].lines?.map((line, idx) => (
+                  <p key={idx}>{line}</p>
+                ))}
+              </div>
 
-        {slateSections.map((section) => (
-          <SlateSection key={section.id} section={section} contributions={contributions} />
-        ))}
+              {/* Action Pill Buttons */}
+              <div className="flex flex-wrap gap-4 mt-6 gsap-reveal">
+                {slateSections[0].actions?.map((action) => (
+                  <PillButton key={action.label} href={action.href} variant="outline">
+                    {action.label}
+                  </PillButton>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 02 / SKILLS SECTION */}
+        <section id="skills" className="portfolio-section border-t border-[#111111]/10">
+          <div className="portfolio-container grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            {/* Sticky Label */}
+            <div className="lg:col-span-3 flex lg:flex-col items-baseline lg:items-start gap-3 lg:sticky lg:top-24 select-none">
+              <span className="font-display text-3xl sm:text-4xl lg:text-5xl text-[#111111]/25 leading-none">02</span>
+              <h2 className="font-display text-lg sm:text-xl lg:text-2xl text-[#111111] leading-none uppercase tracking-wider">Skills</h2>
+            </div>
+
+            {/* Content Area */}
+            <div className="lg:col-span-9 flex flex-col gap-8">
+              <div className="gsap-reveal">
+                <h3 className="font-display text-xl sm:text-2xl lg:text-3xl text-[#111111] leading-tight mb-2 uppercase">
+                  {slateSections[1].title}
+                </h3>
+                <p className="font-body text-xs sm:text-sm text-[#111111]/60">
+                  {slateSections[1].kicker}
+                </p>
+              </div>
+
+              {/* Mockup 1 Grid of Pastel Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full gsap-reveal-cards">
+                {/* Frontend Card - Peach */}
+                <div className="gsap-card bg-[var(--card-peach)] border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between min-h-[220px] shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
+                  <p className="font-body text-xs sm:text-sm font-extrabold text-[#111111] leading-relaxed">
+                    {slateSections[1].lines?.[0]}
+                  </p>
+                  <span className="font-display text-base sm:text-lg text-[#111111] tracking-wider mt-6 uppercase select-none">
+                    Frontend
+                  </span>
+                </div>
+
+                {/* Backend Card - Yellow */}
+                <div className="gsap-card bg-[var(--card-yellow)] border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between min-h-[220px] shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
+                  <p className="font-body text-xs sm:text-sm font-extrabold text-[#111111] leading-relaxed">
+                    {slateSections[1].lines?.[1]}
+                  </p>
+                  <span className="font-display text-base sm:text-lg text-[#111111] tracking-wider mt-6 uppercase select-none">
+                    Backend
+                  </span>
+                </div>
+
+                {/* Data/Infra Card - Lavender */}
+                <div className="gsap-card bg-[var(--card-lavender)] border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between min-h-[220px] shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
+                  <p className="font-body text-xs sm:text-sm font-extrabold text-[#111111] leading-relaxed">
+                    {slateSections[1].lines?.[2]}
+                  </p>
+                  <span className="font-display text-base sm:text-lg text-[#111111] tracking-wider mt-6 uppercase select-none">
+                    Data & Infra
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons to navigate sections */}
+              <div className="flex flex-wrap gap-4 mt-4 gsap-reveal">
+                {slateSections[1].actions?.map((action) => (
+                  <PillButton
+                    key={action.label}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (action.target) handleNavigate(action.target);
+                    }}
+                    variant="outline"
+                  >
+                    {action.label}
+                  </PillButton>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 03 / PROJECTS SECTION */}
+        <section id="projects" className="portfolio-section border-t border-[#111111]/10" style={{ backgroundColor: "var(--card-peach)" }}>
+          <div className="portfolio-container grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            {/* Sticky Label */}
+            <div className="lg:col-span-3 flex lg:flex-col items-baseline lg:items-start gap-3 lg:sticky lg:top-24 select-none">
+              <span className="font-display text-3xl sm:text-4xl lg:text-5xl text-[#111111]/25 leading-none">03</span>
+              <h2 className="font-display text-lg sm:text-xl lg:text-2xl text-[#111111] leading-none uppercase tracking-wider">Projects</h2>
+            </div>
+
+            {/* Content Area */}
+            <div className="lg:col-span-9 flex flex-col gap-8">
+              <div className="gsap-reveal">
+                <h3 className="font-display text-xl sm:text-2xl lg:text-3xl text-[#111111] leading-tight mb-2 uppercase">
+                  {slateSections[2].title}
+                </h3>
+                <p className="font-body text-xs sm:text-sm text-[#111111]/60">
+                  {slateSections[2].kicker}
+                </p>
+              </div>
+
+              {/* Projects Grid with alternating pastel hover background colors */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full gsap-reveal-cards">
+                {slateSections[2].projects?.map((project, idx) => {
+                  const pastelColors = [
+                    "hover:bg-[var(--card-peach)]",
+                    "hover:bg-[var(--card-yellow)]",
+                    "hover:bg-[var(--card-lavender)]",
+                    "hover:bg-[var(--card-mint)]",
+                  ];
+                  const hoverColorClass = pastelColors[idx % pastelColors.length];
+
+                  return (
+                    <article
+                      key={project.title}
+                      className={`gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between min-h-[220px] shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:scale-[1.01] hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300 ${hoverColorClass}`}
+                    >
+                      <div>
+                        {/* Interactive Title with Image Preview */}
+                        <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-3">
+                          <LinkPreview
+                            className="text-inherit hover:underline decoration-[#111111] decoration-2 underline-offset-4 decoration-transparent hover:decoration-[#111111]"
+                            imageSrc={project.previewImage}
+                            title={project.title}
+                            url={project.href}
+                          >
+                            {project.title}
+                          </LinkPreview>
+                        </h4>
+                        <p className="font-body text-xs sm:text-sm text-[#111111]/85 leading-relaxed mt-2">
+                          {project.note}
+                        </p>
+                      </div>
+
+                      <PillButton href={project.href} variant="outline" className="mt-6 self-start">
+                        Open Project
+                      </PillButton>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 04 / OPEN SOURCE SECTION */}
+        <section id="open-source" className="portfolio-section border-t border-[#111111]/10">
+          <div className="portfolio-container grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            {/* Sticky Label */}
+            <div className="lg:col-span-3 flex lg:flex-col items-baseline lg:items-start gap-3 lg:sticky lg:top-24 select-none">
+              <span className="font-display text-3xl sm:text-4xl lg:text-5xl text-[#111111]/25 leading-none">04</span>
+              <h2 className="font-display text-lg sm:text-xl lg:text-2xl text-[#111111] leading-none uppercase tracking-wider">OSS</h2>
+            </div>
+
+            {/* Content Area */}
+            <div className="lg:col-span-9 flex flex-col gap-8">
+              <div className="gsap-reveal">
+                <h3 className="font-display text-xl sm:text-2xl lg:text-3xl text-[#111111] leading-tight mb-2 uppercase">
+                  {slateSections[3].title}
+                </h3>
+                <p className="font-body text-xs sm:text-sm text-[#111111]/60">
+                  {slateSections[3].kicker}
+                </p>
+              </div>
+
+              {/* Contributions telemetry board */}
+              <OpenSourceLedger contributions={contributions} />
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-4 gsap-reveal">
+                {slateSections[3].actions?.map((action) => (
+                  <PillButton key={action.label} href={action.href} variant="outline">
+                    {action.label}
+                  </PillButton>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 05 / EXPERIENCE SECTION */}
+        <section id="experience" className="portfolio-section border-t border-[#111111]/10" style={{ backgroundColor: "#EFEAFF" }}>
+          <div className="portfolio-container grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            {/* Sticky Label */}
+            <div className="lg:col-span-3 flex lg:flex-col items-baseline lg:items-start gap-3 lg:sticky lg:top-24 select-none">
+              <span className="font-display text-3xl sm:text-4xl lg:text-5xl text-[#111111]/25 leading-none">05</span>
+              <h2 className="font-display text-lg sm:text-xl lg:text-2xl text-[#111111] leading-none uppercase tracking-wider">Experience</h2>
+            </div>
+
+            {/* Content Area */}
+            <div className="lg:col-span-9 flex flex-col gap-8">
+              <div className="gsap-reveal">
+                <h3 className="font-display text-xl sm:text-2xl lg:text-3xl text-[#111111] leading-tight mb-2 uppercase">
+                  {slateSections[4].title}
+                </h3>
+                <p className="font-body text-xs sm:text-sm text-[#111111]/60">
+                  {slateSections[4].kicker}
+                </p>
+              </div>
+
+              {/* Experience timeline grid */}
+              <div className="grid grid-cols-1 gap-6 w-full gsap-reveal-cards">
+                {/* Loql Experience Card */}
+                <div className="gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col md:flex-row md:items-start justify-between gap-6 shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
+                  <div className="flex-grow">
+                    <span className="inline-flex px-3 py-1 rounded-full border border-[#111111] bg-[var(--card-yellow)] font-body text-[9px] font-bold uppercase tracking-wider text-[#111111] mb-4 select-none">
+                      Co-Founder
+                    </span>
+                    <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-2">Loql</h4>
+                    <p className="font-body text-sm text-[#111111]/80 max-w-xl">
+                      building a local peer-to-peer rental marketplace built around trust, nearby discovery, and QR handshakes.
+                    </p>
+                  </div>
+                  <div className="flex flex-col md:items-end justify-between h-full min-w-[160px] shrink-0 text-left md:text-right gap-4">
+                    <span className="font-body text-[10px] font-bold uppercase tracking-wider text-[#111111]/50">
+                      August 2025 - Present
+                    </span>
+                    <PillButton href="https://loql.in/" variant="outline" className="self-start md:self-end">
+                      Visit Loql
+                    </PillButton>
+                  </div>
+                </div>
+
+                {/* Zingvel Experience Card */}
+                <div className="gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col md:flex-row md:items-start justify-between gap-6 shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
+                  <div className="flex-grow">
+                    <span className="inline-flex px-3 py-1 rounded-full border border-[#111111] bg-[var(--card-peach)] font-body text-[9px] font-bold uppercase tracking-wider text-[#111111] mb-4 select-none">
+                      Software Developer Intern
+                    </span>
+                    <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-2">Zingvel Travels</h4>
+                    <p className="font-body text-sm text-[#111111]/80 max-w-xl">
+                      Shipped production travel booking UX flow and custom AI travel planning helpers.
+                    </p>
+                  </div>
+                  <div className="flex flex-col md:items-end justify-between h-full min-w-[160px] shrink-0 text-left md:text-right gap-4">
+                    <span className="font-body text-[10px] font-bold uppercase tracking-wider text-[#111111]/50">
+                      Dec 2024 - May 2025
+                    </span>
+                    <PillButton href="http://www.zingvel.com/" variant="outline" className="self-start md:self-end">
+                      Visit Zingvel
+                    </PillButton>
+                  </div>
+                </div>
+
+                {/* Through-line Summary Card */}
+                <div className="gsap-card bg-[var(--card-lavender)] border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
+                  <p className="font-body text-sm sm:text-base font-extrabold text-[#111111] leading-relaxed max-w-3xl">
+                    &quot;{slateSections[4].lines?.[2]}&quot;
+                  </p>
+                  <span className="font-display text-base sm:text-lg text-[#111111] tracking-wider mt-6 uppercase select-none">
+                    Core philosophy
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 06 / CONTACT & FOOTER TAKE OVER SECTION (Mockup 2) */}
+        <section id="contact" className="w-full bg-[#0B2519] pt-16 pb-6 px-6 md:pt-24 md:pb-8 md:px-12 relative flex flex-col justify-between overflow-hidden">
+          {/* Main CTA */}
+          <div className="max-w-5xl mx-auto text-center flex flex-col items-center justify-center flex-grow py-12">
+            <h2 className="font-display text-[#B1FC54] text-[6vw] sm:text-[4.5vw] md:text-[3.8vw] lg:text-[3.2vw] leading-[1.05] uppercase tracking-tight select-none mb-8 max-w-3xl">
+              Ready to build something that hits different?
+            </h2>
+            <PillButton href="mailto:sharmadivyanshu265@gmail.com" variant="white">
+              Get in touch
+            </PillButton>
+          </div>
+
+          {/* Footer Sub-Links Navigation Panel */}
+          <div className="w-full border-t border-[#B1FC54]/20 pt-8 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-[#F7F8F4] font-body text-sm font-bold uppercase tracking-wider">
+            {/* Left Nav */}
+            <nav className="flex flex-wrap gap-x-6 gap-y-2">
+              <a href="#about" onClick={(e) => { e.preventDefault(); handleNavigate("about"); }} className="hover:text-[#B1FC54] transition-colors">About</a>
+              <a href="#skills" onClick={(e) => { e.preventDefault(); handleNavigate("skills"); }} className="hover:text-[#B1FC54] transition-colors">Skills</a>
+              <a href="#projects" onClick={(e) => { e.preventDefault(); handleNavigate("projects"); }} className="hover:text-[#B1FC54] transition-colors">Work</a>
+              <Link href="/blog" className="hover:text-[#B1FC54] transition-colors">Blog</Link>
+              <a href="#contact" onClick={(e) => { e.preventDefault(); handleNavigate("contact"); }} className="hover:text-[#B1FC54] transition-colors">Contact</a>
+            </nav>
+
+            {/* Right Socials */}
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-[#B1FC54]">
+              <a href="https://github.com/devcool20" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">GitHub</a>
+              <a href="https://www.linkedin.com/in/divyanshu-sharma-b9b534113/" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">LinkedIn</a>
+              <a href="mailto:sharmadivyanshu265@gmail.com" className="hover:text-white transition-colors">Email</a>
+            </div>
+          </div>
+
+          {/* Massive Banner Text */}
+          <div className="w-full overflow-hidden mt-12 py-4 select-none">
+            <h3 className="footer-banner-text font-display text-[#B1FC54] text-[6.8vw] sm:text-[7.5vw] md:text-[8vw] leading-none uppercase tracking-tighter whitespace-nowrap text-center flex items-center justify-center gap-6">
+              <span>Divyanshu Sharma</span>
+              <span className="w-[1.1em] h-[1.1em] rounded-[0.25em] border-2 sm:border-3 border-[#B1FC54] bg-transparent inline-flex items-center justify-center shadow-[3px_3px_0_0_rgba(17,252,84,0.3)] sm:shadow-[4px_4px_0_0_rgba(17,252,84,0.3)] shrink-0">
+                <FlagLogo size={42} className="text-[#B1FC54] w-[60%] h-[60%]" />
+              </span>
+            </h3>
+          </div>
+
+          {/* Legal / Built Details */}
+          <div className="w-full border-t border-[#B1FC54]/10 pt-6 mt-8 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-[#F7F8F4]/40 font-body text-[9px] font-bold uppercase tracking-widest text-center sm:text-left">
+            <span>&copy; 2026 Divyanshu Sharma. All Rights Reserved.</span>
+            <span>Built with guts. Design to disrupt.</span>
+            <span>Terms of use</span>
+          </div>
+        </section>
+
       </main>
     </div>
   );

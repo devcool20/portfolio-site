@@ -1,0 +1,130 @@
+<svg width="100%" max-width="600" height="160" viewBox="0 0 600 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Glow filters -->
+    <filter id="red-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="green-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    /* 8s animation cycle:
+       - 0s - 1s: All off
+       - 1s: Light 1 turns red
+       - 2s: Light 2 turns red
+       - 3s: Light 3 turns red
+       - 4s: Light 4 turns red
+       - 5s: Light 5 turns red
+       - 5.8s - 6.5s: Random pause (all 5 red lights stay on)
+       - 6.5s: Lights OUT! (all go dark)
+       - 6.5s - 8s: Lights out period (go text active)
+    */
+    @keyframes f1-l1 {
+      0%, 12.5% { fill: #220505; filter: none; }
+      12.6%, 81.25% { fill: #FF0D00; filter: url(#red-glow); }
+      81.26%, 100% { fill: #220505; filter: none; }
+    }
+    @keyframes f1-l2 {
+      0%, 25% { fill: #220505; filter: none; }
+      25.1%, 81.25% { fill: #FF0D00; filter: url(#red-glow); }
+      81.26%, 100% { fill: #220505; filter: none; }
+    }
+    @keyframes f1-l3 {
+      0%, 37.5% { fill: #220505; filter: none; }
+      37.6%, 81.25% { fill: #FF0D00; filter: url(#red-glow); }
+      81.26%, 100% { fill: #220505; filter: none; }
+    }
+    @keyframes f1-l4 {
+      0%, 50% { fill: #220505; filter: none; }
+      50.1%, 81.25% { fill: #FF0D00; filter: url(#red-glow); }
+      81.26%, 100% { fill: #220505; filter: none; }
+    }
+    @keyframes f1-l5 {
+      0%, 62.5% { fill: #220505; filter: none; }
+      62.6%, 81.25% { fill: #FF0D00; filter: url(#red-glow); }
+      81.26%, 100% { fill: #220505; filter: none; }
+    }
+    @keyframes text-anim {
+      0%, 81.25% { opacity: 0.1; fill: #555; }
+      81.26%, 99% { opacity: 1; fill: #00FF66; filter: url(#green-glow); }
+      100% { opacity: 0.1; fill: #555; }
+    }
+    .l1 { animation: f1-l1 8s infinite; }
+    .l2 { animation: f1-l2 8s infinite; }
+    .l3 { animation: f1-l3 8s infinite; }
+    .l4 { animation: f1-l4 8s infinite; }
+    .l5 { animation: f1-l5 8s infinite; }
+    .race-text {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      animation: text-anim 8s infinite;
+    }
+  </style>
+
+  <!-- Background panel and carbon fiber overlay lines removed for transparent rendering on page background -->
+
+  <!-- Telemetry Details on Gantry -->
+  <text x="50" y="25" fill="#E10600" font-family="monospace" font-size="9" letter-spacing="1">LIVE TELEMETRY</text>
+  <text x="550" y="25" fill="#8B949E" font-family="monospace" font-size="9" letter-spacing="1" text-anchor="end">ENG REV // V10.2</text>
+
+  <!-- Gantry Structure -->
+  <!-- Horizontal Main Beam -->
+  <rect x="50" y="38" width="500" height="10" rx="2" fill="none" stroke="#30363D" stroke-width="1"/>
+  <!-- Structure Lines (Truss) -->
+  <line x1="80" y1="38" x2="100" y2="48" stroke="#30363D" stroke-width="1"/>
+  <line x1="120" y1="38" x2="140" y2="48" stroke="#30363D" stroke-width="1"/>
+  <line x1="180" y1="38" x2="200" y2="48" stroke="#30363D" stroke-width="1"/>
+  <line x1="220" y1="38" x2="240" y2="48" stroke="#30363D" stroke-width="1"/>
+  <line x1="280" y1="38" x2="300" y2="48" stroke="#30363D" stroke-width="1"/>
+  <line x1="320" y1="38" x2="340" y2="48" stroke="#30363D" stroke-width="1"/>
+  <line x1="380" y1="38" x2="400" y2="48" stroke="#30363D" stroke-width="1"/>
+  <line x1="420" y1="38" x2="440" y2="48" stroke="#30363D" stroke-width="1"/>
+  <line x1="480" y1="38" x2="500" y2="48" stroke="#30363D" stroke-width="1"/>
+
+  <!-- Light Units hanging from gantry -->
+  <!-- Unit 1 -->
+  <line x1="180" y1="48" x2="180" y2="58" stroke="#30363D" stroke-width="2"/>
+  <rect x="160" y="58" width="40" height="52" rx="4" fill="none" stroke="#30363D" stroke-width="1"/>
+  <circle cx="180" cy="71" r="9" class="l1" fill="#220505" stroke="#000" stroke-width="1"/>
+  <circle cx="180" cy="95" r="9" class="l1" fill="#220505" stroke="#000" stroke-width="1"/>
+
+  <!-- Unit 2 -->
+  <line x1="240" y1="48" x2="240" y2="58" stroke="#30363D" stroke-width="2"/>
+  <rect x="220" y="58" width="40" height="52" rx="4" fill="none" stroke="#30363D" stroke-width="1"/>
+  <circle cx="240" cy="71" r="9" class="l2" fill="#220505" stroke="#000" stroke-width="1"/>
+  <circle cx="240" cy="95" r="9" class="l2" fill="#220505" stroke="#000" stroke-width="1"/>
+
+  <!-- Unit 3 -->
+  <line x1="300" y1="48" x2="300" y2="58" stroke="#30363D" stroke-width="2"/>
+  <rect x="280" y="58" width="40" height="52" rx="4" fill="none" stroke="#30363D" stroke-width="1"/>
+  <circle cx="300" cy="71" r="9" class="l3" fill="#220505" stroke="#000" stroke-width="1"/>
+  <circle cx="300" cy="95" r="9" class="l3" fill="#220505" stroke="#000" stroke-width="1"/>
+
+  <!-- Unit 4 -->
+  <line x1="360" y1="48" x2="360" y2="58" stroke="#30363D" stroke-width="2"/>
+  <rect x="340" y="58" width="40" height="52" rx="4" fill="none" stroke="#30363D" stroke-width="1"/>
+  <circle cx="360" cy="71" r="9" class="l4" fill="#220505" stroke="#000" stroke-width="1"/>
+  <circle cx="360" cy="95" r="9" class="l4" fill="#220505" stroke="#000" stroke-width="1"/>
+
+  <!-- Unit 5 -->
+  <line x1="420" y1="48" x2="420" y2="58" stroke="#30363D" stroke-width="2"/>
+  <rect x="400" y="58" width="40" height="52" rx="4" fill="none" stroke="#30363D" stroke-width="1"/>
+  <circle cx="420" cy="71" r="9" class="l5" fill="#220505" stroke="#000" stroke-width="1"/>
+  <circle cx="420" cy="95" r="9" class="l5" fill="#220505" stroke="#000" stroke-width="1"/>
+
+  <!-- Live Race Text -->
+  <text x="300" y="138" class="race-text" text-anchor="middle">LIGHTS OUT AND AWAY WE GO!</text>
+</svg>

@@ -1,11 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
 import { getBlogPosts, getPostBySlug } from "@/lib/notion";
 import NotionRenderer from "@/components/NotionRenderer";
 import ShareButton from "@/components/ShareButton";
+import PillButton from "@/components/ui/PillButton";
 
 export const revalidate = 60;
 
@@ -43,27 +42,48 @@ export default async function BlogPostPage({
   const postUrl = `${siteUrl}/blog/${slug}`;
 
   return (
-    <article className="slate-section blog-post-section accent-violet">
-      <div className="slate-heading">
-        <span>01</span>
-        <p>Article</p>
-        <div className="slate-gif-frame">
-          <img src="/gif/f1(2).gif" alt="" loading="lazy" />
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 max-w-7xl mx-auto w-full px-4 sm:px-6">
+      {/* Left Column: Post Metadata & Back Button */}
+      <div className="lg:col-span-3 flex flex-row lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4 lg:sticky lg:top-24 select-none">
+        <div className="flex flex-col items-start gap-1">
+          <span className="font-display text-4xl sm:text-5xl lg:text-6xl text-[#111111]/25 leading-none">
+            01
+          </span>
+          <h1 className="font-display text-xl sm:text-2xl lg:text-3xl text-[#111111] leading-none uppercase tracking-wider">
+            Article
+          </h1>
+          <p className="font-body text-xs sm:text-sm text-[#111111]/50 mt-1">
+            {post.date
+              ? new Date(post.date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                })
+              : "Draft"}
+          </p>
+        </div>
+        <div className="lg:mt-6">
+          <PillButton href="/blog" variant="outline">
+            All Notes
+          </PillButton>
         </div>
       </div>
 
-      <div className="slate-page blog-slate-page">
-        <div className="slate-rule" aria-hidden="true" />
-
-        <header className="blog-post-slate-header">
+      {/* Right Column: Article Card */}
+      <div className="lg:col-span-9 flex flex-col gap-6">
+        <article className="bg-white border-2 border-[#111111] rounded-[20px] p-6 sm:p-8 md:p-12 shadow-[4px_4px_0_0_rgba(17,17,17,1)] flex flex-col gap-6">
           {post.cover ? (
-            <div className="blog-post-cover">
-              <img src={post.cover} alt="" loading="lazy" />
+            <div className="w-full max-h-[480px] overflow-hidden border-2 border-[#111111] rounded-[16px] shadow-[4px_4px_0_0_rgba(17,17,17,1)]">
+              <img
+                src={post.cover}
+                alt=""
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
             </div>
           ) : null}
 
           <div>
-            <p className="slate-kicker">
+            <p className="font-body text-xs sm:text-sm uppercase tracking-wider text-[#111111]/50">
               {post.date
                 ? new Date(post.date).toLocaleDateString("en-US", {
                     year: "numeric",
@@ -72,42 +92,48 @@ export default async function BlogPostPage({
                   })
                 : "Draft"}
             </p>
-            <h1 className="slate-title">{post.title}</h1>
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#111111] uppercase leading-tight tracking-tight mt-2">
+              {post.title}
+            </h1>
             {post.excerpt ? (
-              <div className="slate-line" style={{ "--write": 1 } as CSSProperties}>
-                <p className="slate-line-copy">{post.excerpt}</p>
-              </div>
+              <p className="font-body text-base sm:text-lg text-[#111111]/70 border-l-4 border-[#B1FC54] pl-4 py-1 mt-4 italic">
+                {post.excerpt}
+              </p>
             ) : null}
+          </div>
 
-            <div className="slate-actions blog-post-actions">
-              <Link href="/blog" className="slate-choice">
-                All posts
-              </Link>
-              <div className="blog-share-wrap">
-                <ShareButton title={post.title} url={postUrl} />
-              </div>
+          <div className="h-[2px] bg-[#111111]/10 my-2" aria-hidden="true" />
+
+          {post.mediaFiles.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-4">
+              {post.mediaFiles.slice(0, 4).map((url, index) => (
+                <div
+                  key={index}
+                  className="aspect-square rounded-xl border-2 border-[#111111] overflow-hidden shadow-[2px_2px_0_0_rgba(17,17,17,1)]"
+                >
+                  <img
+                    src={url}
+                    alt={`${post.title} media ${index + 1}`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
             </div>
-          </div>
-        </header>
+          ) : null}
 
-        {post.mediaFiles.length > 0 ? (
-          <div className="blog-inline-media">
-            {post.mediaFiles.slice(0, 4).map((url, index) => (
-              <div key={index} className="blog-inline-media-card">
-                <img
-                  src={url}
-                  alt={`${post.title} media ${index + 1}`}
-                  loading="lazy"
-                />
-              </div>
-            ))}
+          <div className="blog-post-body-slate">
+            <NotionRenderer blocks={blocks} surface="paper" />
           </div>
-        ) : null}
 
-        <div className="blog-post-body-slate">
-          <NotionRenderer blocks={blocks} surface="paper" />
-        </div>
+          <div className="flex flex-wrap items-center gap-4 mt-8 pt-8 border-t border-[#111111]/10">
+            <PillButton href="/blog" variant="outline">
+              Back to Blog
+            </PillButton>
+            <ShareButton title={post.title} url={postUrl} />
+          </div>
+        </article>
       </div>
-    </article>
+    </div>
   );
 }

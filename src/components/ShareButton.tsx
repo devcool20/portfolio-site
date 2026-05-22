@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import PillButton from "@/components/ui/PillButton";
 
 export default function ShareButton({ title, url }: { title: string; url: string }) {
   const handleShare = async () => {
@@ -25,12 +26,8 @@ export default function ShareButton({ title, url }: { title: string; url: string
   };
 
   return (
-    <button
-      type="button"
-      className="text-xs font-mono uppercase tracking-[0.15em] text-gray-500 hover:text-[#FF1800] transition-colors"
-      onClick={handleShare}
-    >
+    <PillButton variant="outline" onClick={handleShare}>
       Share
-    </button>
+    </PillButton>
   );
 }
