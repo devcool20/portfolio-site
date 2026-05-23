@@ -21,7 +21,7 @@ export default function PillButton({
   type = "button",
 }: PillButtonProps) {
   const baseClasses =
-    "group inline-flex items-center gap-3.5 px-6 py-3 rounded-full border-2 font-jakarta text-xs font-extrabold uppercase tracking-widest transition-all duration-300 select-none active:scale-[0.98]";
+    "group inline-flex items-center justify-center rounded-full border-2 font-sans text-xs font-extrabold uppercase tracking-widest transition-all duration-500 ease-in-out select-none active:scale-[0.98] overflow-hidden h-12 p-0 min-w-12";
 
   const variantClasses = {
     lime: "bg-[#B1FC54] text-[#111111] border-[#111111] hover:bg-[#a2ec44] hover:shadow-[4px_4px_0_0_rgba(17,17,17,1)]",
@@ -32,28 +32,33 @@ export default function PillButton({
       "bg-transparent text-[#111111] border-[#111111] hover:bg-[#111111]/5 hover:shadow-[4px_4px_0_0_rgba(11,37,25,0.15)]",
   };
 
+  const textWrapperClasses =
+    "max-w-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out group-hover:max-w-xs group-hover:opacity-100 flex items-center shrink-0";
+
   const dividerClasses = {
-    lime: "h-4 w-[1px] bg-[#111111]/20",
-    white: "h-4 w-[1px] bg-[#111111]/20",
-    dark: "h-4 w-[1px] bg-white/20",
-    outline: "h-4 w-[1px] bg-[#111111]/20",
+    lime: "h-4 w-[1px] bg-[#111111]/20 mx-3 shrink-0",
+    white: "h-4 w-[1px] bg-[#111111]/20 mx-3 shrink-0",
+    dark: "h-4 w-[1px] bg-white/20 mx-3 shrink-0",
+    outline: "h-4 w-[1px] bg-[#111111]/20 mx-3 shrink-0",
   };
 
   const arrowClasses = {
-    lime: "w-6 h-6 rounded-full border border-[#111111] flex items-center justify-center text-[10px] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
+    lime: "w-8 h-8 rounded-full border border-[#111111] bg-white text-[#111111] flex items-center justify-center text-[10px] transition-all duration-500 ease-in-out group-hover:rotate-[360deg] shrink-0 m-1.5",
     white:
-      "w-6 h-6 rounded-full border border-[#111111] flex items-center justify-center text-[10px] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
-    dark: "w-6 h-6 rounded-full border border-white flex items-center justify-center text-[10px] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
+      "w-8 h-8 rounded-full border border-[#111111] bg-[#B1FC54] text-[#111111] flex items-center justify-center text-[10px] transition-all duration-500 ease-in-out group-hover:rotate-[360deg] shrink-0 m-1.5",
+    dark: "w-8 h-8 rounded-full border border-white bg-white text-[#111111] flex items-center justify-center text-[10px] transition-all duration-500 ease-in-out group-hover:rotate-[360deg] shrink-0 m-1.5",
     outline:
-      "w-6 h-6 rounded-full border border-[#111111] flex items-center justify-center text-[10px] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
+      "w-8 h-8 rounded-full border border-[#111111] bg-white text-[#111111] flex items-center justify-center text-[10px] transition-all duration-500 ease-in-out group-hover:rotate-[360deg] shrink-0 m-1.5 group-hover:bg-[#B1FC54]",
   };
 
   const content = (
-    <>
-      <span className="shrink-0">{children}</span>
-      <span className={dividerClasses[variant]} />
+    <div className="flex items-center justify-center w-full">
+      <div className={textWrapperClasses}>
+        <span className="pl-5 whitespace-nowrap text-[10px] tracking-wider">{children}</span>
+        <span className={dividerClasses[variant]} />
+      </div>
       <span className={arrowClasses[variant]}>↗</span>
-    </>
+    </div>
   );
 
   if (href) {

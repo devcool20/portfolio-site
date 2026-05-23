@@ -14,8 +14,8 @@
   --card-mint: #E3F5FD;
 
   /* Font Families */
-  --font-display: var(--font-franklin), Impact, sans-serif;
-  --font-sans: var(--font-jakarta), system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-franklin-cond), Impact, sans-serif;
+  --font-sans: var(--font-franklin-reg), system-ui, -apple-system, sans-serif;
 }
 
 /* Custom Reset */

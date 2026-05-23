@@ -3,7 +3,6 @@
 import Link from "next/link";
 import BrandHero from "@/components/hero/BrandHero";
 import LinkPreview from "@/components/ui/LinkPreview";
-import FlagLogo from "@/components/ui/FlagLogo";
 import PillButton from "@/components/ui/PillButton";
 import type { GitHubContributionData, GitHubPullRequest } from "@/lib/github";
 import { useEffect, useRef, useState } from "react";
@@ -233,7 +232,7 @@ function OpenSourceLedger({ contributions }: { contributions: GitHubContribution
         <div className="flex items-start justify-between gap-4 border-b border-[#111111]/10 pb-3">
           <div>
             <span className="font-body text-[9px] font-bold uppercase tracking-wider text-[#111111]/50">Repository</span>
-            <h4 className="font-display text-lg sm:text-xl text-[#111111] lowercase leading-none mt-1">
+            <h4 className="font-display text-lg sm:text-xl text-[#111111] uppercase leading-none mt-1">
               {group.repoName}
             </h4>
           </div>
@@ -255,22 +254,22 @@ function OpenSourceLedger({ contributions }: { contributions: GitHubContribution
                 key={pr.url}
                 className="border border-[#111111]/10 rounded-xl p-3 bg-gray-50/50 hover:bg-[#B1FC54]/5 transition-colors duration-200"
               >
-                <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-[#111111]/40 mb-1.5">
-                  <span className="text-[#111111]/50">{pr.repo}</span>
+                <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-normal tracking-wide text-[#111111]/50 mb-1.5">
+                  <span className="text-[#111111]/65">{pr.repo}</span>
                   <span>•</span>
                   <span>#{pr.number}</span>
                   <span>•</span>
                   <span>{formatDate(pr.createdAt)}</span>
                 </div>
 
-                <h5 className="font-body text-xs font-extrabold text-[#111111] hover:text-[#B1FC54] transition-colors leading-snug mb-2">
+                <h5 className="font-body text-xs sm:text-sm font-normal text-[#111111] hover:text-[#B1FC54] transition-colors leading-snug mb-2.5">
                   <Link href={pr.url} target="_blank" rel="noreferrer">
                     {pr.title}
                   </Link>
                 </h5>
 
-                <div className="flex items-center gap-2.5 text-[9px] font-bold uppercase tracking-wider text-[#111111]/50">
-                  <span className={`inline-flex px-1.5 py-0.5 rounded border border-[#111111] font-extrabold ${statusColors[pr.status as "merged" | "closed" | "open"] || "bg-white"}`}>
+                <div className="flex items-center gap-2.5 text-[10px] font-normal tracking-wide text-[#111111]/50">
+                  <span className={`inline-flex px-1.5 py-0.5 rounded border border-[#111111] font-bold uppercase text-[9px] leading-none select-none ${statusColors[pr.status as "merged" | "closed" | "open"] || "bg-white"}`}>
                     {statusLabel(pr)}
                   </span>
                   <span>{pr.comments} comments</span>
@@ -378,12 +377,12 @@ export default function HomeClient({ contributions }: { contributions: GitHubCon
       gsap.utils.toArray<HTMLElement>(".gsap-reveal").forEach((element) => {
         gsap.fromTo(
           element,
-          { opacity: 0, y: 36 },
+          { opacity: 0, y: 14 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
-            ease: "power2.out",
+            duration: 0.5,
+            ease: "power3.out",
             scrollTrigger: {
               trigger: element,
               start: "top 88%",
@@ -398,13 +397,13 @@ export default function HomeClient({ contributions }: { contributions: GitHubCon
         const cards = container.querySelectorAll(".gsap-card");
         gsap.fromTo(
           cards,
-          { opacity: 0, y: 40 },
+          { opacity: 0, y: 16 },
           {
             opacity: 1,
             y: 0,
-            stagger: 0.1,
-            duration: 0.7,
-            ease: "power2.out",
+            stagger: 0.08,
+            duration: 0.6,
+            ease: "power3.out",
             scrollTrigger: {
               trigger: container,
               start: "top 86%",
@@ -414,20 +413,6 @@ export default function HomeClient({ contributions }: { contributions: GitHubCon
         );
       });
 
-      // Parallax effect on the large footer banner text
-      gsap.fromTo(
-        ".footer-banner-text",
-        { xPercent: 12 },
-        {
-          xPercent: -6,
-          scrollTrigger: {
-            trigger: "#contact",
-            start: "top bottom",
-            end: "bottom bottom",
-            scrub: 0.6,
-          },
-        },
-      );
     });
 
     return () => ctx.revert();
@@ -495,34 +480,49 @@ export default function HomeClient({ contributions }: { contributions: GitHubCon
 
               {/* Mockup 1 Grid of Pastel Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full gsap-reveal-cards">
-                {/* Frontend Card - Peach */}
-                <div className="gsap-card bg-[var(--card-peach)] border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between min-h-[220px] shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
-                  <p className="font-body text-xs sm:text-sm font-extrabold text-[#111111] leading-relaxed">
-                    {slateSections[1].lines?.[0]}
-                  </p>
-                  <span className="font-display text-base sm:text-lg text-[#111111] tracking-wider mt-6 uppercase select-none">
-                    Frontend
-                  </span>
+                {/* Frontend Card */}
+                <div className="gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between min-h-[220px] shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] hover:bg-[var(--card-peach)] transition-all duration-300">
+                  <div>
+                    <span className="inline-flex px-2 py-0.5 rounded-full border border-[#111111] bg-white font-body text-[9px] font-bold uppercase tracking-wider text-[#111111] mb-4 select-none">
+                      01 / STACK
+                    </span>
+                    <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-3 uppercase">
+                      Frontend
+                    </h4>
+                    <p className="font-body text-xs sm:text-sm text-[#111111]/85 leading-relaxed font-normal">
+                      React, Next.js, React Native, TypeScript, animation-heavy product interfaces.
+                    </p>
+                  </div>
                 </div>
 
-                {/* Backend Card - Yellow */}
-                <div className="gsap-card bg-[var(--card-yellow)] border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between min-h-[220px] shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
-                  <p className="font-body text-xs sm:text-sm font-extrabold text-[#111111] leading-relaxed">
-                    {slateSections[1].lines?.[1]}
-                  </p>
-                  <span className="font-display text-base sm:text-lg text-[#111111] tracking-wider mt-6 uppercase select-none">
-                    Backend
-                  </span>
+                {/* Backend Card */}
+                <div className="gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between min-h-[220px] shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] hover:bg-[var(--card-yellow)] transition-all duration-300">
+                  <div>
+                    <span className="inline-flex px-2 py-0.5 rounded-full border border-[#111111] bg-white font-body text-[9px] font-bold uppercase tracking-wider text-[#111111] mb-4 select-none">
+                      02 / STACK
+                    </span>
+                    <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-3 uppercase">
+                      Backend
+                    </h4>
+                    <p className="font-body text-xs sm:text-sm text-[#111111]/85 leading-relaxed font-normal">
+                      Node.js, FastAPI, Python, Kafka, real-time flows, API design, and service glue.
+                    </p>
+                  </div>
                 </div>
 
-                {/* Data/Infra Card - Lavender */}
-                <div className="gsap-card bg-[var(--card-lavender)] border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between min-h-[220px] shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
-                  <p className="font-body text-xs sm:text-sm font-extrabold text-[#111111] leading-relaxed">
-                    {slateSections[1].lines?.[2]}
-                  </p>
-                  <span className="font-display text-base sm:text-lg text-[#111111] tracking-wider mt-6 uppercase select-none">
-                    Data & Infra
-                  </span>
+                {/* Data/Infra Card */}
+                <div className="gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between min-h-[220px] shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] hover:bg-[var(--card-lavender)] transition-all duration-300">
+                  <div>
+                    <span className="inline-flex px-2 py-0.5 rounded-full border border-[#111111] bg-white font-body text-[9px] font-bold uppercase tracking-wider text-[#111111] mb-4 select-none">
+                      03 / STACK
+                    </span>
+                    <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-3 uppercase">
+                      Data & Infra
+                    </h4>
+                    <p className="font-body text-xs sm:text-sm text-[#111111]/85 leading-relaxed font-normal">
+                      PostgreSQL, MongoDB, Docker, AWS, and ML integrations when they earn their place.
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -582,8 +582,11 @@ export default function HomeClient({ contributions }: { contributions: GitHubCon
                       className={`gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between min-h-[220px] shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:scale-[1.01] hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300 ${hoverColorClass}`}
                     >
                       <div>
+                        <span className="inline-flex px-2 py-0.5 rounded-full border border-[#111111] bg-white font-body text-[9px] font-bold uppercase tracking-wider text-[#111111] mb-4 select-none">
+                          PROJECT {String(idx + 1).padStart(2, "0")}
+                        </span>
                         {/* Interactive Title with Image Preview */}
-                        <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-3">
+                        <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-3 uppercase">
                           <LinkPreview
                             className="text-inherit hover:underline decoration-[#111111] decoration-2 underline-offset-4 decoration-transparent hover:decoration-[#111111]"
                             imageSrc={project.previewImage}
@@ -593,7 +596,7 @@ export default function HomeClient({ contributions }: { contributions: GitHubCon
                             {project.title}
                           </LinkPreview>
                         </h4>
-                        <p className="font-body text-xs sm:text-sm text-[#111111]/85 leading-relaxed mt-2">
+                        <p className="font-body text-xs sm:text-sm text-[#111111]/85 leading-relaxed mt-2 font-normal">
                           {project.note}
                         </p>
                       </div>
@@ -667,18 +670,18 @@ export default function HomeClient({ contributions }: { contributions: GitHubCon
               {/* Experience timeline grid */}
               <div className="grid grid-cols-1 gap-6 w-full gsap-reveal-cards">
                 {/* Loql Experience Card */}
-                <div className="gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col md:flex-row md:items-start justify-between gap-6 shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
+                <div className="gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col md:flex-row md:items-start justify-between gap-6 shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] hover:bg-[var(--card-yellow)] transition-all duration-300">
                   <div className="flex-grow">
-                    <span className="inline-flex px-3 py-1 rounded-full border border-[#111111] bg-[var(--card-yellow)] font-body text-[9px] font-bold uppercase tracking-wider text-[#111111] mb-4 select-none">
+                    <span className="inline-flex px-2 py-0.5 rounded-full border border-[#111111] bg-white font-body text-[9px] font-bold uppercase tracking-wider text-[#111111] mb-4 select-none">
                       Co-Founder
                     </span>
-                    <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-2">Loql</h4>
-                    <p className="font-body text-sm text-[#111111]/80 max-w-xl">
+                    <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-2 uppercase">Loql</h4>
+                    <p className="font-body text-xs sm:text-sm text-[#111111]/80 max-w-xl font-normal leading-relaxed">
                       building a local peer-to-peer rental marketplace built around trust, nearby discovery, and QR handshakes.
                     </p>
                   </div>
                   <div className="flex flex-col md:items-end justify-between h-full min-w-[160px] shrink-0 text-left md:text-right gap-4">
-                    <span className="font-body text-[10px] font-bold uppercase tracking-wider text-[#111111]/50">
+                    <span className="font-body text-[9px] font-bold uppercase tracking-wider text-[#111111]/50">
                       August 2025 - Present
                     </span>
                     <PillButton href="https://loql.in/" variant="outline" className="self-start md:self-end">
@@ -688,18 +691,18 @@ export default function HomeClient({ contributions }: { contributions: GitHubCon
                 </div>
 
                 {/* Zingvel Experience Card */}
-                <div className="gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col md:flex-row md:items-start justify-between gap-6 shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
+                <div className="gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col md:flex-row md:items-start justify-between gap-6 shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] hover:bg-[var(--card-peach)] transition-all duration-300">
                   <div className="flex-grow">
-                    <span className="inline-flex px-3 py-1 rounded-full border border-[#111111] bg-[var(--card-peach)] font-body text-[9px] font-bold uppercase tracking-wider text-[#111111] mb-4 select-none">
+                    <span className="inline-flex px-2 py-0.5 rounded-full border border-[#111111] bg-white font-body text-[9px] font-bold uppercase tracking-wider text-[#111111] mb-4 select-none">
                       Software Developer Intern
                     </span>
-                    <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-2">Zingvel Travels</h4>
-                    <p className="font-body text-sm text-[#111111]/80 max-w-xl">
+                    <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-2 uppercase">Zingvel Travels</h4>
+                    <p className="font-body text-xs sm:text-sm text-[#111111]/80 max-w-xl font-normal leading-relaxed">
                       Shipped production travel booking UX flow and custom AI travel planning helpers.
                     </p>
                   </div>
                   <div className="flex flex-col md:items-end justify-between h-full min-w-[160px] shrink-0 text-left md:text-right gap-4">
-                    <span className="font-body text-[10px] font-bold uppercase tracking-wider text-[#111111]/50">
+                    <span className="font-body text-[9px] font-bold uppercase tracking-wider text-[#111111]/50">
                       Dec 2024 - May 2025
                     </span>
                     <PillButton href="http://www.zingvel.com/" variant="outline" className="self-start md:self-end">
@@ -709,24 +712,29 @@ export default function HomeClient({ contributions }: { contributions: GitHubCon
                 </div>
 
                 {/* Through-line Summary Card */}
-                <div className="gsap-card bg-[var(--card-lavender)] border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] transition-all duration-300">
-                  <p className="font-body text-sm sm:text-base font-extrabold text-[#111111] leading-relaxed max-w-3xl">
-                    &quot;{slateSections[4].lines?.[2]}&quot;
-                  </p>
-                  <span className="font-display text-base sm:text-lg text-[#111111] tracking-wider mt-6 uppercase select-none">
-                    Core philosophy
-                  </span>
+                <div className="gsap-card bg-white border-2 border-[#111111] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between shadow-[4px_4px_0_0_rgba(17,17,17,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_rgba(17,17,17,1)] hover:bg-[var(--card-lavender)] transition-all duration-300">
+                  <div>
+                    <span className="inline-flex px-2 py-0.5 rounded-full border border-[#111111] bg-white font-body text-[9px] font-bold uppercase tracking-wider text-[#111111] mb-4 select-none">
+                      Philosophy
+                    </span>
+                    <h4 className="font-display text-xl sm:text-2xl text-[#111111] leading-none mb-3 uppercase">
+                      Core Philosophy
+                    </h4>
+                    <p className="font-body text-xs sm:text-sm text-[#111111]/85 leading-relaxed font-normal italic">
+                      &quot;{slateSections[4].lines?.[2]}&quot;
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 06 / CONTACT & FOOTER TAKE OVER SECTION (Mockup 2) */}
-        <section id="contact" className="w-full bg-[#0B2519] pt-16 pb-6 px-6 md:pt-24 md:pb-8 md:px-12 relative flex flex-col justify-between overflow-hidden">
+        {/* 06 / CONTACT & REDESIGNED MINIMAL FOOTER SECTION */}
+        <section id="contact" className="w-full bg-[#0B2519] pt-20 pb-24 px-6 md:pt-32 md:pb-36 md:px-12 relative flex flex-col justify-between overflow-hidden min-h-[75vh] md:min-h-[80vh]">
           {/* Main CTA */}
-          <div className="max-w-5xl mx-auto text-center flex flex-col items-center justify-center flex-grow py-12">
-            <h2 className="font-display text-[#B1FC54] text-[6vw] sm:text-[4.5vw] md:text-[3.8vw] lg:text-[3.2vw] leading-[1.05] uppercase tracking-tight select-none mb-8 max-w-3xl">
+          <div className="max-w-5xl mx-auto text-center flex flex-col items-center justify-center py-16 md:py-24">
+            <h2 className="font-display text-[#B1FC54] text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.1] uppercase tracking-tight select-none mb-8 max-w-2xl">
               Ready to build something that hits different?
             </h2>
             <PillButton href="mailto:sharmadivyanshu265@gmail.com" variant="white">
@@ -734,40 +742,50 @@ export default function HomeClient({ contributions }: { contributions: GitHubCon
             </PillButton>
           </div>
 
-          {/* Footer Sub-Links Navigation Panel */}
-          <div className="w-full border-t border-[#B1FC54]/20 pt-8 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-[#F7F8F4] font-body text-sm font-bold uppercase tracking-wider">
-            {/* Left Nav */}
-            <nav className="flex flex-wrap gap-x-6 gap-y-2">
-              <a href="#about" onClick={(e) => { e.preventDefault(); handleNavigate("about"); }} className="hover:text-[#B1FC54] transition-colors">About</a>
-              <a href="#skills" onClick={(e) => { e.preventDefault(); handleNavigate("skills"); }} className="hover:text-[#B1FC54] transition-colors">Skills</a>
-              <a href="#projects" onClick={(e) => { e.preventDefault(); handleNavigate("projects"); }} className="hover:text-[#B1FC54] transition-colors">Work</a>
-              <Link href="/blog" className="hover:text-[#B1FC54] transition-colors">Blog</Link>
-              <a href="#contact" onClick={(e) => { e.preventDefault(); handleNavigate("contact"); }} className="hover:text-[#B1FC54] transition-colors">Contact</a>
-            </nav>
-
-            {/* Right Socials */}
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-[#B1FC54]">
-              <a href="https://github.com/devcool20" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">GitHub</a>
-              <a href="https://www.linkedin.com/in/divyanshu-sharma-b9b534113/" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">LinkedIn</a>
-              <a href="mailto:sharmadivyanshu265@gmail.com" className="hover:text-white transition-colors">Email</a>
+          {/* Redesigned Minimal Footer Panel */}
+          <div className="w-full border-t border-[#B1FC54]/10 pt-12 mt-12 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 text-[#F7F8F4]">
+            {/* Left Column: Branding and Copyright */}
+            <div className="md:col-span-5 flex flex-col justify-between gap-8">
+              <div className="flex flex-col gap-2">
+                <span className="font-display text-3xl text-[#B1FC54] tracking-wider uppercase select-none">
+                  Divyanshu Sharma
+                </span>
+                <span className="font-body text-[11px] text-[#F7F8F4]/60 font-normal tracking-wide block">
+                  Full-stack product builder // F1 obsessive
+                </span>
+              </div>
+              <div className="font-body text-[10px] text-[#F7F8F4]/40 font-normal tracking-wide flex flex-col gap-1.5 mt-2">
+                <span>&copy; 2026 Divyanshu Sharma. All Rights Reserved.</span>
+                <span>Built with guts. Design to disrupt.</span>
+              </div>
             </div>
-          </div>
 
-          {/* Massive Banner Text */}
-          <div className="w-full overflow-hidden mt-12 py-4 select-none">
-            <h3 className="footer-banner-text font-display text-[#B1FC54] text-[6.8vw] sm:text-[7.5vw] md:text-[8vw] leading-none uppercase tracking-tighter whitespace-nowrap text-center flex items-center justify-center gap-6">
-              <span>Divyanshu Sharma</span>
-              <span className="w-[1.1em] h-[1.1em] rounded-[0.25em] border-2 sm:border-3 border-[#B1FC54] bg-transparent inline-flex items-center justify-center shadow-[3px_3px_0_0_rgba(17,252,84,0.3)] sm:shadow-[4px_4px_0_0_rgba(17,252,84,0.3)] shrink-0">
-                <FlagLogo size={42} className="text-[#B1FC54] w-[60%] h-[60%]" />
-              </span>
-            </h3>
-          </div>
+            {/* Right Columns: Links Grid */}
+            <div className="md:col-span-7 md:pl-10 grid grid-cols-2 sm:grid-cols-3 gap-8 font-sans text-sm font-normal tracking-wide text-[#F7F8F4]/80">
+              {/* Navigation Links Column */}
+              <div className="flex flex-col gap-4">
+                <span className="text-[#B1FC54] text-[10px] font-bold uppercase tracking-widest select-none">Directory</span>
+                <nav className="flex flex-col gap-2.5">
+                  <a href="#about" onClick={(e) => { e.preventDefault(); handleNavigate("about"); }} className="hover:text-[#B1FC54] transition-colors self-start">About</a>
+                  <a href="#skills" onClick={(e) => { e.preventDefault(); handleNavigate("skills"); }} className="hover:text-[#B1FC54] transition-colors self-start">Skills</a>
+                  <a href="#projects" onClick={(e) => { e.preventDefault(); handleNavigate("projects"); }} className="hover:text-[#B1FC54] transition-colors self-start">Work</a>
+                  <Link href="/blog" className="hover:text-[#B1FC54] transition-colors self-start">Blog</Link>
+                </nav>
+              </div>
 
-          {/* Legal / Built Details */}
-          <div className="w-full border-t border-[#B1FC54]/10 pt-6 mt-8 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-[#F7F8F4]/40 font-body text-[9px] font-bold uppercase tracking-widest text-center sm:text-left">
-            <span>&copy; 2026 Divyanshu Sharma. All Rights Reserved.</span>
-            <span>Built with guts. Design to disrupt.</span>
-            <span>Terms of use</span>
+              {/* Social Links Column */}
+              <div className="flex flex-col gap-4">
+                <span className="text-[#B1FC54] text-[10px] font-bold uppercase tracking-widest select-none">Connect</span>
+                <div className="flex flex-col gap-2.5">
+                  <a href="https://github.com/devcool20" target="_blank" rel="noreferrer" className="hover:text-[#B1FC54] transition-colors self-start">GitHub</a>
+                  <a href="https://www.linkedin.com/in/divyanshu-sharma-b9b534113/" target="_blank" rel="noreferrer" className="hover:text-[#B1FC54] transition-colors self-start">LinkedIn</a>
+                  <a href="mailto:sharmadivyanshu265@gmail.com" className="hover:text-[#B1FC54] transition-colors self-start">Email</a>
+                </div>
+              </div>
+
+              {/* Legal Links Column */}
+             
+            </div>
           </div>
         </section>
 

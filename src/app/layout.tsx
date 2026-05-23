@@ -1,34 +1,35 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
+const fontFranklinCond = localFont({
+  src: "../../public/fonts/franklin-gothic/Franklin Gothic Condensed.ttf",
+  variable: "--font-franklin-cond",
   display: "swap",
 });
 
-const franklinGothic = localFont({
-  src: [
-    {
-      path: "../../public/fonts/franklin-gothic/Franklin Gothic Condensed.ttf",
-      weight: "700",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/franklin-gothic/FranklinGothic.ttf",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/franklin-gothic/FranklinGothicITALIC.ttf",
-      weight: "400",
-      style: "italic",
-    },
-  ],
-  variable: "--font-franklin",
+const fontFranklinReg = localFont({
+  src: "../../public/fonts/franklin-gothic/FranklinGothic.ttf",
+  variable: "--font-franklin-reg",
+  display: "swap",
+});
+
+const fontFranklinItal = localFont({
+  src: "../../public/fonts/franklin-gothic/FranklinGothicITALIC.ttf",
+  variable: "--font-franklin-ital",
+  display: "swap",
+});
+
+const fontFranklinOutline = localFont({
+  src: "../../public/fonts/franklin-gothic/fgwo____.ttf",
+  variable: "--font-franklin-outline",
+  display: "swap",
+});
+
+const fontFranklinGo = localFont({
+  src: "../../public/fonts/franklin-gothic/FRANKGO.ttf",
+  variable: "--font-franklin-go",
   display: "swap",
 });
 
@@ -44,7 +45,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${franklinGothic.variable}`}>
+    <html
+      lang="en"
+      className={`${fontFranklinCond.variable} ${fontFranklinReg.variable} ${fontFranklinItal.variable} ${fontFranklinOutline.variable} ${fontFranklinGo.variable}`}
+    >
       <body className="relative min-h-screen overflow-x-hidden bg-[#F7F8F4] text-[#111111] antialiased">
         <SmoothScroll />
         {children}

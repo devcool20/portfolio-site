@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import React, { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
 import FlagLogo from "@/components/ui/FlagLogo";
@@ -111,6 +110,34 @@ export default function BrandHero({ onNavigate }: BrandHeroProps) {
     };
   }, []);
 
+  const nameRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // 1. Auto-scroll to #about at 6.5s (when lights go out)
+    const scrollTimer = setTimeout(() => {
+      const aboutEl = document.getElementById("about");
+      if (aboutEl) {
+        const lenis = (window as unknown as { lenis: { scrollTo: (target: HTMLElement, options?: { offset?: number }) => void } | null }).lenis;
+        if (lenis) {
+          lenis.scrollTo(aboutEl, { offset: -24 });
+        } else {
+          aboutEl.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }, 6500);
+
+    // 2. Entrance Animation: Motion Blur Focus
+    if (nameRef.current) {
+      gsap.fromTo(
+        nameRef.current,
+        { filter: "blur(20px)", opacity: 0, scale: 0.95 },
+        { filter: "blur(0px)", opacity: 1, scale: 1, duration: 1.2, delay: 0.2, ease: "power3.out" }
+      );
+    }
+
+    return () => clearTimeout(scrollTimer);
+  }, []);
+
   return (
     <div className="relative min-h-[100dvh] flex flex-col justify-between px-6 py-4 md:px-10 md:py-6 bg-[#F7F8F4]">
       {/* Top Header Navigation */}
@@ -142,14 +169,155 @@ export default function BrandHero({ onNavigate }: BrandHeroProps) {
 
       {/* Main Hero Display Area */}
       <main className="flex-grow flex flex-col justify-center items-center text-center max-w-4xl mx-auto py-8 md:py-16">
-        {/* Hero Title */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.8rem] leading-none text-[#111111] font-display uppercase tracking-tight select-none mb-6">
-          Divyanshu Sharma
-        </h1>
+        {/* F1 Split-Horizon Speed Shear Text */}
+        <div
+          ref={nameRef}
+          className="group/hero-name relative inline-block cursor-pointer select-none mb-6 max-w-full overflow-visible"
+        >
+          {/* Invisible placeholder for sizing */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.8rem] leading-none text-[#111111] font-display uppercase tracking-tight opacity-0 pointer-events-none select-none whitespace-nowrap">
+            DIVYANSHU SHARMA
+          </h1>
+
+          {/* Top Half Slice */}
+          <div className="absolute top-0 left-0 w-full h-[50%] overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/hero-name:-translate-x-3 select-none pointer-events-none">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.8rem] leading-none text-[#111111] font-display uppercase tracking-tight whitespace-nowrap transition-[text-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/hero-name:[text-shadow:-1px_0_2px_rgba(225,6,0,0.4),1px_0_2px_rgba(177,252,84,0.4)]">
+              DIVYANSHU SHARMA
+            </h1>
+          </div>
+
+          {/* Bottom Half Slice */}
+          <div className="absolute bottom-0 left-0 w-full h-[50%] overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/hero-name:translate-x-3 select-none pointer-events-none">
+            <h1
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.8rem] leading-none text-[#111111] font-display uppercase tracking-tight whitespace-nowrap transition-[text-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/hero-name:[text-shadow:-1px_0_2px_rgba(225,6,0,0.4),1px_0_2px_rgba(177,252,84,0.4)]"
+              style={{ transform: "translateY(-50%)" }}
+            >
+              DIVYANSHU SHARMA
+            </h1>
+          </div>
+
+          {/* Glowing Split F1 Red Line */}
+          <div className="absolute top-1/2 left-0 w-full h-[2px] bg-[#E10600] scale-x-0 group-hover/hero-name:scale-x-100 origin-center transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_12px_#E10600] pointer-events-none" />
+        </div>
 
         {/* F1 Lights SVG just below it */}
         <div className="w-full max-w-[420px] px-4 my-2">
-          <Image src="/f1-lights.svg" alt="F1 lights telemetry" width={420} height={112} className="w-full h-auto" priority />
+          <svg viewBox="0 0 600 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+            <defs>
+              <filter id="red-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <filter id="green-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <style>{`
+              @keyframes f1-l1 {
+                0%, 12.5% { fill: #220505; filter: none; }
+                12.6%, 81.25% { fill: #FF0D00; filter: url(#red-glow); }
+                81.26%, 100% { fill: #220505; filter: none; }
+              }
+              @keyframes f1-l2 {
+                0%, 25% { fill: #220505; filter: none; }
+                25.1%, 81.25% { fill: #FF0D00; filter: url(#red-glow); }
+                81.26%, 100% { fill: #220505; filter: none; }
+              }
+              @keyframes f1-l3 {
+                0%, 37.5% { fill: #220505; filter: none; }
+                37.6%, 81.25% { fill: #FF0D00; filter: url(#red-glow); }
+                81.26%, 100% { fill: #220505; filter: none; }
+              }
+              @keyframes f1-l4 {
+                0%, 50% { fill: #220505; filter: none; }
+                50.1%, 81.25% { fill: #FF0D00; filter: url(#red-glow); }
+                81.26%, 100% { fill: #220505; filter: none; }
+              }
+              @keyframes f1-l5 {
+                0%, 62.5% { fill: #220505; filter: none; }
+                62.6%, 81.25% { fill: #FF0D00; filter: url(#red-glow); }
+                81.26%, 100% { fill: #220505; filter: none; }
+              }
+              @keyframes text-anim {
+                0%, 81.25% { opacity: 0.1; fill: #555; }
+                81.26%, 99% { opacity: 1; fill: #00FF66; filter: url(#green-glow); }
+                100% { opacity: 0.1; fill: #555; }
+              }
+              .f1-l1-light { animation: f1-l1 8s infinite; }
+              .f1-l2-light { animation: f1-l2 8s infinite; }
+              .f1-l3-light { animation: f1-l3 8s infinite; }
+              .f1-l4-light { animation: f1-l4 8s infinite; }
+              .f1-l5-light { animation: f1-l5 8s infinite; }
+              .f1-race-text {
+                font-family: var(--font-display), Impact, sans-serif;
+                font-weight: 700;
+                font-size: 20px;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                animation: text-anim 8s infinite;
+              }
+            `}</style>
+
+            {/* Telemetry Details on Gantry */}
+            <text x="50" y="25" fill="#E10600" fontFamily="monospace" fontSize="9" letterSpacing="1">LIVE TELEMETRY</text>
+            <text x="550" y="25" fill="#8B949E" fontFamily="monospace" fontSize="9" letterSpacing="1" textAnchor="end">ENG REV // V10.2</text>
+
+            {/* Gantry Structure */}
+            {/* Horizontal Main Beam */}
+            <rect x="50" y="38" width="500" height="10" rx="2" fill="none" stroke="#30363D" strokeWidth="1"/>
+            {/* Structure Lines (Truss) */}
+            <line x1="80" y1="38" x2="100" y2="48" stroke="#30363D" strokeWidth="1"/>
+            <line x1="120" y1="38" x2="140" y2="48" stroke="#30363D" strokeWidth="1"/>
+            <line x1="180" y1="38" x2="200" y2="48" stroke="#30363D" strokeWidth="1"/>
+            <line x1="220" y1="38" x2="240" y2="48" stroke="#30363D" strokeWidth="1"/>
+            <line x1="280" y1="38" x2="300" y2="48" stroke="#30363D" strokeWidth="1"/>
+            <line x1="320" y1="38" x2="340" y2="48" stroke="#30363D" strokeWidth="1"/>
+            <line x1="380" y1="38" x2="400" y2="48" stroke="#30363D" strokeWidth="1"/>
+            <line x1="420" y1="38" x2="440" y2="48" stroke="#30363D" strokeWidth="1"/>
+            <line x1="480" y1="38" x2="500" y2="48" stroke="#30363D" strokeWidth="1"/>
+
+            {/* Light Units hanging from gantry */}
+            {/* Unit 1 */}
+            <line x1="180" y1="48" x2="180" y2="58" stroke="#30363D" strokeWidth="2"/>
+            <rect x="160" y="58" width="40" height="52" rx="4" fill="none" stroke="#30363D" strokeWidth="1"/>
+            <circle cx="180" cy="71" r="9" className="f1-l1-light" fill="#220505" stroke="#000" strokeWidth="1"/>
+            <circle cx="180" cy="95" r="9" className="f1-l1-light" fill="#220505" stroke="#000" strokeWidth="1"/>
+
+            {/* Unit 2 */}
+            <line x1="240" y1="48" x2="240" y2="58" stroke="#30363D" strokeWidth="2"/>
+            <rect x="220" y="58" width="40" height="52" rx="4" fill="none" stroke="#30363D" strokeWidth="1"/>
+            <circle cx="240" cy="71" r="9" className="f1-l2-light" fill="#220505" stroke="#000" strokeWidth="1"/>
+            <circle cx="240" cy="95" r="9" className="f1-l2-light" fill="#220505" stroke="#000" strokeWidth="1"/>
+
+            {/* Unit 3 */}
+            <line x1="300" y1="48" x2="300" y2="58" stroke="#30363D" strokeWidth="2"/>
+            <rect x="280" y="58" width="40" height="52" rx="4" fill="none" stroke="#30363D" strokeWidth="1"/>
+            <circle cx="300" cy="71" r="9" className="f1-l3-light" fill="#220505" stroke="#000" strokeWidth="1"/>
+            <circle cx="300" cy="95" r="9" className="f1-l3-light" fill="#220505" stroke="#000" strokeWidth="1"/>
+
+            {/* Unit 4 */}
+            <line x1="360" y1="48" x2="360" y2="58" stroke="#30363D" strokeWidth="2"/>
+            <rect x="340" y="58" width="40" height="52" rx="4" fill="none" stroke="#30363D" strokeWidth="1"/>
+            <circle cx="360" cy="71" r="9" className="f1-l4-light" fill="#220505" stroke="#000" strokeWidth="1"/>
+            <circle cx="360" cy="95" r="9" className="f1-l4-light" fill="#220505" stroke="#000" strokeWidth="1"/>
+
+            {/* Unit 5 */}
+            <line x1="420" y1="48" x2="420" y2="58" stroke="#30363D" strokeWidth="2"/>
+            <rect x="400" y="58" width="40" height="52" rx="4" fill="none" stroke="#30363D" strokeWidth="1"/>
+            <circle cx="420" cy="71" r="9" className="f1-l5-light" fill="#220505" stroke="#000" strokeWidth="1"/>
+            <circle cx="420" cy="95" r="9" className="f1-l5-light" fill="#220505" stroke="#000" strokeWidth="1"/>
+
+            {/* Live Race Text */}
+            <text x="300" y="138" className="f1-race-text" textAnchor="middle">LIGHTS OUT AND AWAY WE GO!</text>
+          </svg>
         </div>
       </main>
 
@@ -231,7 +399,7 @@ export default function BrandHero({ onNavigate }: BrandHeroProps) {
 
             {/* Menu Footer */}
             <div className="w-full flex flex-col sm:flex-row items-center justify-between text-[10px] font-bold uppercase tracking-widest text-[#B1FC54]/60 border-t border-[#B1FC54]/10 pt-6 max-w-7xl mx-auto gap-4">
-              <span>Made in 2026. Design inspired by Propaganda.</span>
+              <span>.</span>
               <div className="flex gap-4">
                 <a href="https://github.com/devcool20" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">GitHub</a>
                 <a href="https://www.linkedin.com/in/divyanshu-sharma-b9b534113/" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">LinkedIn</a>
